@@ -71,7 +71,8 @@ class GitlabApi extends ApiConnectBase{
   }
 
   public getProjectsURL = (): string => `${this.apiBseUrl}${this.projectsUrl}`
-  public getIssuesURL = (projectId: number): string => `${this.apiBseUrl}/${String(projectId)}${this.issuesUrl}`
+  public getIssuesURL = (projectId: number): string => `${this.apiBseUrl}/${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
+  public getIssueURL = (projectId: number, issueId: number): string => `${this.apiBseUrl}/${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
   
   public createParams = (): object => {
     return {
@@ -101,7 +102,6 @@ class Base extends Command {
   }
 
   protected createGitlabApiObject = (): GitlabApi => {
-    this.readSettingsJson()
     this.readSettingsJson()
     if (isNull(this.settingsData)) {
       throw new Error('fail read settings data file.');

@@ -65,7 +65,7 @@ export default class Redmine extends Base {
 
   private ValidationFlags = (flags: any) => {
     if (isNaN(parseInt(flags.project))) {
-      throw new Error('project id(-p, --projectId) is not a number');
+      throw new Error('project id(-p, --project) is not a number');
     }
     if (isNaN(parseInt(flags.ticket))) {
       throw new Error('ticket id(-t, --ticket) is not a number');
