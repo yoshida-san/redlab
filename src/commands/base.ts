@@ -88,15 +88,19 @@ class Base extends Command {
   protected settingsFilePath: string = __dirname + '/data/settings.json'
 
   private readSettingsJson = () => {
-    if (isNull(this.settingsData)) {
-      this.settingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
+    try {
+      if (isNull(this.settingsData)) {
+        this.settingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
+      }
+    } catch (e) {
+      throw new Error('fail read settings data file. try \'redlab settings\'')
     }
   }
 
   protected createRedmineApiObject = (): RedmineApi => {
     this.readSettingsJson()
     if (isNull(this.settingsData)) {
-      throw new Error('fail read settings data file.');
+      throw new Error('fail read settings data file. try \'redlab settings\'');
     }
     return new RedmineApi(this.settingsData.r_url, this.settingsData.r_key)
   }
@@ -104,7 +108,7 @@ class Base extends Command {
   protected createGitlabApiObject = (): GitlabApi => {
     this.readSettingsJson()
     if (isNull(this.settingsData)) {
-      throw new Error('fail read settings data file.');
+      throw new Error('fail read settings data file. try \'redlab settings\'');
     }
     return new GitlabApi(this.settingsData.g_url, this.settingsData.g_key, this.settingsData.g_owned)
   }
