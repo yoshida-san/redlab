@@ -20,7 +20,6 @@ export default class Gitlab extends Base {
   private getProjectId = async (gApi: GitlabApi) => {
     try {
       const projects = await gApi.get(gApi.getProjectsURL(), gApi.createParams())
-      console.log(projects.data)
       const argsProjects = projects.data.map((obj: any) => {
         return { name: obj.name, value: obj.id }
       })
@@ -33,7 +32,6 @@ export default class Gitlab extends Base {
       const choosed: any = await this.inquiry(projectsList)
       return parseInt(choosed.id)
     } catch (e) {
-      console.log(e.message)
       throw new Error('Fail get projects')
     }
   }
