@@ -79,14 +79,14 @@ export default class Gitlab extends Base {
         return (flags.detail)
           ? `${chalk.default.bgBlue(` ${obj.iid} `)} ${chalk.default.blue.bold(obj.title)}
 
-${chalk.default.blueBright('status:')}
-${obj.status}
+${chalk.default.blueBright('state:')}
+${obj.state}
 
 ${chalk.default.blueBright('milestone:')}
-${obj.milestone}
+${(!isNull(obj.milestone))? obj.milestone: "--"}
 
 ${chalk.default.blueBright('author:')}
-${obj.author}
+${obj.author.name}
 
 ${chalk.default.blueBright('assignee:')}
 ${(!isNull(obj.assignee))? obj.assignee.name: "--"}
@@ -101,6 +101,7 @@ ${obj.description}
       })
       this.log(`---`)
       this.log(`${chalk.default.greenBright(`project id`)}: ${projectId}`)
+      this.log(`${chalk.default.greenBright(`issues count`)}: ${issuesData.data.length}`)
 
     } catch (e) {
       this.error(`${e.message}`)
