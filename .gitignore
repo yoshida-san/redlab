@@ -1,3 +1,5 @@
+!.gitkeep
+
 # Logs
 logs
 *.log
@@ -61,4 +63,4 @@ typings/
 .next
 
 ## data file
-src/commands/data/
+src/commands/data/*.json
