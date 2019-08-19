@@ -62,3 +62,21 @@ EXAMPLES
   $ redlab redmine -qdp=4567
 ```
 
+## gitlab command
+
+```bash
+$ redlab gitlab -h
+show gitlab issues info
+
+USAGE
+  $ redlab gitlab
+
+OPTIONS
+  -d, --detail           show issue detail
+  -h, --help             show CLI help
+  -i, --issue=issue      [default: 0] issue id. used with project id option(-p, --project)
+  -p, --project=project  [default: 0] project id
+
+EXAMPLE
+  $ redlab gitlab
+```
