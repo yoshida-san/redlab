@@ -61,4 +61,4 @@ typings/
 .next
 
 ## data file
-src/commands/data/settings.json
+src/commands/data/
