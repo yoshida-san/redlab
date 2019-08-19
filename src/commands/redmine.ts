@@ -21,18 +21,22 @@ export default class Redmine extends Base {
   }
 
   private getProjectId = async (rApi: RedmineApi) => {
-    const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, 100))
-    const argsProjects = projects.data.projects.map((obj: any) => {
-      return { name: obj.name, value: obj.id }
-    })
-    const projectsList: object = {
-      name: 'id',
-      message: 'choose project',
-      type: 'list',
-      choices: argsProjects
+    try {
+      const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, 100))
+      const argsProjects = projects.data.projects.map((obj: any) => {
+        return { name: obj.name, value: obj.id }
+      })
+      const projectsList: object = {
+        name: 'id',
+        message: 'choose project',
+        type: 'list',
+        choices: argsProjects
+      }
+      const choosed: any = await this.inquiry(projectsList)
+      return parseInt(choosed.id)
+    } catch (e) {
+      throw new Error('Fail get projects')
     }
-    const choosed: any = await this.inquiry(projectsList)
-    return parseInt(choosed.id)
   }
 
   private getQueryId = async (rApi: RedmineApi, pid: number) => {
