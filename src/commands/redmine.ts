@@ -39,6 +39,77 @@ export default class Redmine extends Base {
     }
   }
 
+  private getIssueStatusId = async (rApi: RedmineApi) => {
+    try {
+      const issueStatuses = await rApi.get(rApi.getIssueStatusesURL(), rApi.createParams(null, null, 100))
+      const argsIssueStatuses: Array<object> = issueStatuses.data.issue_statuses.map((obj: any) => {
+        return { name: obj.name, value: obj.id }
+      })
+      argsIssueStatuses.unshift({id: null, name: '指定なし'})
+      const issuesStatusesList: object = {
+        name: 'id',
+        message: 'choose issues status',
+        type: 'list',
+        choices: argsIssueStatuses
+      }
+      const choosed: any = await this.inquiry(issuesStatusesList)
+      return parseInt(choosed.id)
+    } catch (e) {
+      this.warn('Fail get issue statuses')
+      return null
+    }
+  }
+
+  private getIssueCategoryId = async (rApi: RedmineApi, projectId: number) => {
+    try {
+      const issueCategories = await rApi.get(rApi.getIssueCategoriesURL(String(projectId)), rApi.createParams(null, null, 100))
+      if (issueCategories.data.issue_categories.length === 0) {
+        this.log('this project has no categories')
+        return null
+      }
+      const argsIssueCategories: Array<object> = issueCategories.data.issue_categories.map((obj: any) => {
+        return { name: obj.name, value: obj.id }
+      })
+      argsIssueCategories.unshift({id: null, name: '指定なし'})
+      const issuesCategoriesList: object = {
+        name: 'id',
+        message: 'choose issues status',
+        type: 'list',
+        choices: argsIssueCategories
+      }
+      const choosed: any = await this.inquiry(issuesCategoriesList)
+      return parseInt(choosed.id)
+    } catch (e) {
+      this.warn('Fail get issue category')
+      return null
+    }
+  }
+
+  private getIssueTrackerrId = async (rApi: RedmineApi) => {
+    try {
+      const issueTrackers = await rApi.get(rApi.getIssueTrackersURL(), rApi.createParams(null, null, 100))
+      if (issueTrackers.data.trackers.length === 0) {
+        this.log('this project has no tracker')
+        return null
+      }
+      const argsIssueTrackers: Array<object> = issueTrackers.data.trackers.map((obj: any) => {
+        return { name: obj.name, value: obj.id }
+      })
+      argsIssueTrackers.unshift({id: null, name: '指定なし'})
+      const issuesTrackersList: object = {
+        name: 'id',
+        message: 'choose issues trakcer',
+        type: 'list',
+        choices: argsIssueTrackers
+      }
+      const choosed: any = await this.inquiry(issuesTrackersList)
+      return parseInt(choosed.id)
+    } catch (e) {
+      this.warn('Fail get issue trakcer')
+      return null
+    }
+  }
+
   private getQueryId = async (rApi: RedmineApi, pid: number) => {
     const queries = await rApi.get(rApi.getQueriesURL(), rApi.createParams(null, null, 100))
     const argsQueries = queries.data.queries.map((obj: any) => {
@@ -81,6 +152,9 @@ export default class Redmine extends Base {
   async run() {
     const { flags } = this.parse(Redmine)
     let projectId: number | null = null
+    let statusId: number | null = null
+    let categoryId: number | null = null
+    let trackerId: number | null = null
     let queryId: number | null = null
     let limit: number | null = null
     let offset: number | null = null
@@ -108,6 +182,9 @@ export default class Redmine extends Base {
 
       } else if (flags.project !== '0') {
         projectId = parseInt(flags.project)
+        statusId = await this.getIssueStatusId(rApi)
+        categoryId = await this.getIssueCategoryId(rApi, projectId)
+        trackerId = await this.getIssueTrackerrId(rApi)
 
       } else if (flags.query) {
         projectId = await this.getProjectId(rApi)
@@ -115,11 +192,14 @@ export default class Redmine extends Base {
 
       } else {
         projectId = await this.getProjectId(rApi)
+        statusId = await this.getIssueStatusId(rApi)
+        categoryId = await this.getIssueCategoryId(rApi, projectId)
+        trackerId = await this.getIssueTrackerrId(rApi)
 
       }
 
       this.log(`getting tickets info in project ...`)
-      const ticketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(projectId, queryId, limit, offset))
+      const ticketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(projectId, queryId, limit, offset, statusId, categoryId, trackerId))
       const ticketsList: Array<string> = ticketsData.data.issues.map((obj: any) => {
         return (flags.detail)
           ? `${chalk.default.bgBlue(` ${obj.id} `)} ${chalk.default.blue.bold(obj.subject)}
