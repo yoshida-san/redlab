@@ -4,6 +4,13 @@ import axios from 'axios'
 import * as fs from 'fs'
 import { isNull } from 'util';
 
+interface Question {
+  name: string
+  message: string
+  type: string
+  default:  string | number | boolean
+}
+
 interface SettingsData {
   r_url: string
   r_key: string
