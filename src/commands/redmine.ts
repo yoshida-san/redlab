@@ -110,16 +110,16 @@ ${obj.description}
 
   readonly ValidationFlags = (flags: any) => {
     if (isNaN(parseInt(flags.project, 10))) {
-      throw new Error('project id(-p, --project) is not a number');
+      throw new Error('project id(-p, --project) is not a number')
     }
     if (isNaN(parseInt(flags.ticket, 10))) {
-      throw new Error('ticket id(-t, --ticket) is not a number');
+      throw new Error('ticket id(-t, --ticket) is not a number')
     }
     if (isNaN(parseInt(flags.limit, 10))) {
-      throw new Error('query id(-l, --limit) is not a number');
+      throw new Error('query id(-l, --limit) is not a number')
     }
     if (isNaN(parseInt(flags.offset, 10))) {
-      throw new Error('query id(-o, --offset) is not a number');
+      throw new Error('query id(-o, --offset) is not a number')
     }
   }
 
@@ -127,7 +127,7 @@ ${obj.description}
     try {
       const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, 100))
       const argsProjects = projects.data.projects.map((obj: any) => {
-        return { name: obj.name, value: obj.id }
+        return {name: obj.name, value: obj.id}
       })
       const projectsList: object = {
         name: 'id',
@@ -146,7 +146,7 @@ ${obj.description}
     try {
       const issueStatuses = await rApi.get(rApi.getIssueStatusesURL(), rApi.createParams(null, null, 100))
       const argsIssueStatuses: Array<object> = issueStatuses.data.issue_statuses.map((obj: any) => {
-        return { name: obj.name, value: obj.id }
+        return {name: obj.name, value: obj.id}
       })
       argsIssueStatuses.unshift({id: null, name: '指定なし'})
       const issuesStatusesList: object = {
@@ -171,7 +171,7 @@ ${obj.description}
         return null
       }
       const argsIssueTrackers: Array<object> = issueTrackers.data.trackers.map((obj: any) => {
-        return { name: obj.name, value: obj.id }
+        return {name: obj.name, value: obj.id}
       })
       argsIssueTrackers.unshift({id: null, name: '指定なし'})
       const issuesTrackersList: object = {
@@ -196,7 +196,7 @@ ${obj.description}
         return null
       }
       const argsIssueCategories: Array<object> = issueCategories.data.issue_categories.map((obj: any) => {
-        return { name: obj.name, value: obj.id }
+        return {name: obj.name, value: obj.id}
       })
       argsIssueCategories.unshift({id: null, name: '指定なし'})
       const issuesCategoriesList: object = {

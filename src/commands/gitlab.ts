@@ -1,7 +1,6 @@
 /* tslint:disable:quotemark */
 import {flags} from '@oclif/command'
 import * as chalk from 'chalk'
-import {isNull} from 'util'
 
 import {Base, GitlabApi} from '../base'
 
@@ -23,7 +22,7 @@ export default class Gitlab extends Base {
     try {
       const projects = await gApi.get(gApi.getProjectsURL(), gApi.createParams())
       const argsProjects = projects.data.map((obj: any) => {
-        return { name: obj.name, value: obj.id }
+        return {name: obj.name, value: obj.id}
       })
       const projectsList: object = {
         name: 'id',
@@ -32,18 +31,18 @@ export default class Gitlab extends Base {
         choices: argsProjects
       }
       const choosed: any = await this.inquiry(projectsList)
-      return parseInt(choosed.id)
+      return parseInt(choosed.id, 10)
     } catch (e) {
       throw new Error('Fail get projects')
     }
   }
 
   readonly ValidationFlags = (flags: any) => {
-    if (isNaN(parseInt(flags.project))) {
-      throw new Error('project id(-p, --project) is not a number');
+    if (isNaN(parseInt(flags.project, 10))) {
+      throw new Error('project id(-p, --project) is not a number')
     }
-    if (isNaN(parseInt(flags.issue))) {
-      throw new Error('issue id(-i, --issue) is not a number');
+    if (isNaN(parseInt(flags.issue, 10))) {
+      throw new Error('issue id(-i, --issue) is not a number')
     }
   }
 
@@ -63,14 +62,14 @@ export default class Gitlab extends Base {
       const gApi: GitlabApi = this.createGitlabApiObject()
 
       if (flags.issue !== '0' && flags.project !== '0') {
-        projectId = parseInt(flags.project)
-        issueId = parseInt(flags.issue)
+        projectId = parseInt(flags.project, 10)
+        issueId = parseInt(flags.issue, 10)
         const ticketData = await gApi.get(gApi.getIssueURL(projectId, issueId), gApi.createParams())
         this.log(ticketData.data)
         return
 
       } else if (flags.project !== '0') {
-        projectId = parseInt(flags.project)
+        projectId = parseInt(flags.project, 10)
       } else {
         projectId = await this.getProjectId(gApi)
       }
@@ -85,19 +84,19 @@ ${chalk.default.blueBright('state:')}
 ${obj.state}
 
 ${chalk.default.blueBright('milestone:')}
-${(!isNull(obj.milestone)) ? obj.milestone : "--"}
+${(!(obj.milestone === null)) ? obj.milestone : "--"}
 
 ${chalk.default.blueBright('author:')}
 ${obj.author.name}
 
 ${chalk.default.blueBright('assignee:')}
-${(!isNull(obj.assignee)) ? obj.assignee.name : "--"}
+${(!(obj.assignee === null)) ? obj.assignee.name : "--"}
 
 ${chalk.default.blueBright('description:')}
 ${obj.description}
 `
           : `${chalk.default.blue.bold(`${obj.iid}`)}: ${obj.title}`
-      });
+      })
       issuesList.forEach(issue => {
         this.log(issue)
       })
