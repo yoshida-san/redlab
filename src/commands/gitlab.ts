@@ -1,7 +1,8 @@
-import { flags } from '@oclif/command'
-import { Base, GitlabApi } from './base';
+/* tslint:disable:quotemark */
+import {flags} from '@oclif/command'
+import {Base, GitlabApi} from '../base'
 import * as chalk from 'chalk'
-import { isNull } from 'util';
+import {isNull} from 'util';
 
 export default class Gitlab extends Base {
   static description = 'show gitlab issues info'

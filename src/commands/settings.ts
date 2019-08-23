@@ -1,6 +1,6 @@
-
-import { Base, SettingsData, Question, RedmineApi, GitlabApi } from './base'
-import { flags } from '@oclif/command'
+/* tslint:disable:quotemark */
+import {Base, SettingsData, Question, RedmineApi, GitlabApi} from '../base'
+import {flags} from '@oclif/command'
 import * as fs from 'fs'
 import * as chalk from 'chalk'
 

@@ -1,14 +1,14 @@
+/* tslint:disable:quotemark */
 import {Command} from '@oclif/command'
 import * as inq from 'inquirer'
 import axios from 'axios'
 import * as fs from 'fs'
-import { isNull } from 'util';
 
 interface Question {
   name: string
   message: string
   type: string
-  default:  string | number | boolean
+  default: string | number | boolean
 }
 
 interface SettingsData {
@@ -22,7 +22,7 @@ interface SettingsData {
 class ApiConnectBase {
   async get(url: string, params: object) {
     return await axios.get(url, {
-      params: params
+      params
     })
   }
 }
@@ -38,7 +38,7 @@ class RedmineApi extends ApiConnectBase{
   private issueTrackerUrl: string = '/trackers.json'
 
   constructor(url: string, key: string) {
-    super();
+    super()
     this.apiBseUrl = url
     this.key = key
   }
@@ -73,7 +73,7 @@ class GitlabApi extends ApiConnectBase{
   private issuesUrl: string = '/issues'
 
   constructor(url: string, key: string, owned: boolean) {
-    super();
+    super()
     this.apiBseUrl = url
     this.key = key
     this.owned = owned
@@ -92,13 +92,12 @@ class GitlabApi extends ApiConnectBase{
 }
 
 class Base extends Command {
-
-  private settingsData: SettingsData | null = null
   protected settingsFilePath: string = __dirname + '/data/settings.json'
+  private settingsData: SettingsData | null = null
 
-  private readSettingsJson = () => {
+  readonly readSettingsJson = () => {
     try {
-      if (isNull(this.settingsData)) {
+      if (this.settingsData === null) {
         this.settingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
       }
     } catch (e) {
@@ -108,7 +107,7 @@ class Base extends Command {
 
   protected createRedmineApiObject = (): RedmineApi => {
     this.readSettingsJson()
-    if (isNull(this.settingsData)) {
+    if (this.settingsData === null) {
       throw new Error('fail read settings data file. try \'redlab settings\'');
     }
     return new RedmineApi(this.settingsData.r_url, this.settingsData.r_key)
@@ -116,7 +115,7 @@ class Base extends Command {
 
   protected createGitlabApiObject = (): GitlabApi => {
     this.readSettingsJson()
-    if (isNull(this.settingsData)) {
+    if (this.settingsData === null) {
       throw new Error('fail read settings data file. try \'redlab settings\'');
     }
     return new GitlabApi(this.settingsData.g_url, this.settingsData.g_key, this.settingsData.g_owned)
@@ -132,4 +131,4 @@ class Base extends Command {
 
 }
 
-export { Base, RedmineApi, GitlabApi, SettingsData }
+export {Base, RedmineApi, GitlabApi, SettingsData, Question}

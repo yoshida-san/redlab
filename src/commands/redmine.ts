@@ -1,5 +1,6 @@
-import { flags } from '@oclif/command'
-import { Base, RedmineApi } from './base';
+/* tslint:disable:quotemark */
+import {flags} from '@oclif/command'
+import {Base, RedmineApi} from '../base'
 import * as chalk from 'chalk'
 
 export default class Redmine extends Base {
