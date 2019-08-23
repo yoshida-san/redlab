@@ -50,7 +50,7 @@ class RedmineApi extends ApiConnectBase{
   public getIssueCategoriesURL = (projectId: string): string => `${this.apiBseUrl}/projects/${projectId}${this.issueCategoriesUrl}`
   public getIssueTrackersURL = (): string => `${this.apiBseUrl}${this.issueTrackerUrl}`
   public getIssueURL = (ticketId: string) => `${this.apiBseUrl}/issues/${ticketId}.json`
-  
+
   public createParams = (projectId?: number | null, queryId?: number | null, limit?: number | null, offset?: number | null, status?: number | null, category?: number | null, tracker?: number | null): object => {
     return {
       key: this.key,
@@ -82,7 +82,7 @@ class GitlabApi extends ApiConnectBase{
   public getProjectsURL = (): string => `${this.apiBseUrl}${this.projectsUrl}`
   public getIssuesURL = (projectId: number): string => `${this.apiBseUrl}/${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
   public getIssueURL = (projectId: number, issueId: number): string => `${this.apiBseUrl}/${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
-  
+
   public createParams = (): object => {
     return {
       private_token: this.key,
@@ -129,7 +129,7 @@ class Base extends Command {
   }
 
   async run() { }
-  
+
 }
 
 export { Base, RedmineApi, GitlabApi, SettingsData }
