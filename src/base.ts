@@ -1,6 +1,5 @@
 /* tslint:disable:quotemark */
 import {Command} from '@oclif/command'
-import promise from '@types/promise'
 import axios from 'axios'
 import * as fs from 'fs'
 import * as inq from 'inquirer'
@@ -22,21 +21,22 @@ interface SettingsData {
 
 class ApiConnectBase {
   async get(url: string, params: object) {
+    // tslint:disable-next-line:no-return-await
     return await axios.get(url, {
       params
     })
   }
 }
 
-class RedmineApi extends ApiConnectBase{
-  private apiBseUrl: string = ''
-  private key: string = ''
-  private projectsUrl: string = '/projects.json'
-  private queriesUrl: string = '/queries.json'
-  private issuesUrl: string = '/issues.json'
-  private issueStatusesUrl: string = '/issue_statuses.json'
-  private issueCategoriesUrl: string = '/issue_categories.json'
-  private issueTrackerUrl: string = '/trackers.json'
+class RedmineApi extends ApiConnectBase {
+  readonly apiBseUrl: string = ''
+  readonly key: string = ''
+  readonly projectsUrl: string = '/projects.json'
+  readonly queriesUrl: string = '/queries.json'
+  readonly issuesUrl: string = '/issues.json'
+  readonly issueStatusesUrl: string = '/issue_statuses.json'
+  readonly issueCategoriesUrl: string = '/issue_categories.json'
+  readonly issueTrackerUrl: string = '/trackers.json'
 
   constructor(url: string, key: string) {
     super()
@@ -66,12 +66,12 @@ class RedmineApi extends ApiConnectBase{
   }
 }
 
-class GitlabApi extends ApiConnectBase{
-  private apiBseUrl: string = ''
-  private key: string = ''
-  private owned: boolean = true
-  private projectsUrl: string = '/projects'
-  private issuesUrl: string = '/issues'
+class GitlabApi extends ApiConnectBase {
+  readonly apiBseUrl: string = ''
+  readonly key: string = ''
+  readonly owned: boolean = true
+  readonly projectsUrl: string = '/projects'
+  readonly issuesUrl: string = '/issues'
 
   constructor(url: string, key: string, owned: boolean) {
     super()
