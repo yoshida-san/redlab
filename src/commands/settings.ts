@@ -1,8 +1,9 @@
 /* tslint:disable:quotemark */
-import {Base, SettingsData, Question, RedmineApi, GitlabApi} from '../base'
 import {flags} from '@oclif/command'
-import * as fs from 'fs'
 import * as chalk from 'chalk'
+import * as fs from 'fs'
+
+import {Base, GitlabApi, Question, RedmineApi, SettingsData} from '../base'
 
 export default class Settings extends Base {
   static description = 'redlab settings'
@@ -18,7 +19,7 @@ export default class Settings extends Base {
     log: flags.boolean({char: 'l', default: false, description: 'show log(check API connect process)'})
   }
 
-  private questions: { [key: string]: Question } = {
+  readonly questions: { [key: string]: Question } = {
     r_url: {
       name: 'r_url',
       message: 'Redmine URL(API base URL)',
@@ -52,12 +53,12 @@ export default class Settings extends Base {
   }
 
   async run() {
-    const { flags } = this.parse(Settings)
+    const {flags} = this.parse(Settings)
     let questions: Array<Question> = []
 
     let updateDefault = (q: Question, n?: string | boolean): Question => {
       q.default = (n !== undefined) ? n : q.default
-      return q;
+      return q
     }
 
     try {

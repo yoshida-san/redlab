@@ -1,8 +1,9 @@
 /* tslint:disable:quotemark */
 import {flags} from '@oclif/command'
-import {Base, GitlabApi} from '../base'
 import * as chalk from 'chalk'
-import {isNull} from 'util';
+import {isNull} from 'util'
+
+import {Base, GitlabApi} from '../base'
 
 export default class Gitlab extends Base {
   static description = 'show gitlab issues info'
@@ -18,7 +19,7 @@ export default class Gitlab extends Base {
     detail: flags.boolean({char: 'd', description: 'show issue detail', default: false})
   }
 
-  private getProjectId = async (gApi: GitlabApi) => {
+  readonly getProjectId = async (gApi: GitlabApi) => {
     try {
       const projects = await gApi.get(gApi.getProjectsURL(), gApi.createParams())
       const argsProjects = projects.data.map((obj: any) => {
@@ -37,7 +38,7 @@ export default class Gitlab extends Base {
     }
   }
 
-  private ValidationFlags = (flags: any) => {
+  readonly ValidationFlags = (flags: any) => {
     if (isNaN(parseInt(flags.project))) {
       throw new Error('project id(-p, --project) is not a number');
     }
@@ -47,7 +48,7 @@ export default class Gitlab extends Base {
   }
 
   async run() {
-    const { flags } = this.parse(Gitlab)
+    const {flags} = this.parse(Gitlab)
     let projectId: number | null = null
     let issueId: number | null = null
 
@@ -84,13 +85,13 @@ ${chalk.default.blueBright('state:')}
 ${obj.state}
 
 ${chalk.default.blueBright('milestone:')}
-${(!isNull(obj.milestone))? obj.milestone: "--"}
+${(!isNull(obj.milestone)) ? obj.milestone : "--"}
 
 ${chalk.default.blueBright('author:')}
 ${obj.author.name}
 
 ${chalk.default.blueBright('assignee:')}
-${(!isNull(obj.assignee))? obj.assignee.name: "--"}
+${(!isNull(obj.assignee)) ? obj.assignee.name : "--"}
 
 ${chalk.default.blueBright('description:')}
 ${obj.description}

@@ -1,8 +1,9 @@
 /* tslint:disable:quotemark */
 import {Command} from '@oclif/command'
-import * as inq from 'inquirer'
+import promise from '@types/promise'
 import axios from 'axios'
 import * as fs from 'fs'
+import * as inq from 'inquirer'
 
 interface Question {
   name: string
@@ -108,7 +109,7 @@ class Base extends Command {
   protected createRedmineApiObject = (): RedmineApi => {
     this.readSettingsJson()
     if (this.settingsData === null) {
-      throw new Error('fail read settings data file. try \'redlab settings\'');
+      throw new Error('fail read settings data file. try \'redlab settings\'')
     }
     return new RedmineApi(this.settingsData.r_url, this.settingsData.r_key)
   }
@@ -116,7 +117,7 @@ class Base extends Command {
   protected createGitlabApiObject = (): GitlabApi => {
     this.readSettingsJson()
     if (this.settingsData === null) {
-      throw new Error('fail read settings data file. try \'redlab settings\'');
+      throw new Error('fail read settings data file. try \'redlab settings\'')
     }
     return new GitlabApi(this.settingsData.g_url, this.settingsData.g_key, this.settingsData.g_owned)
   }
@@ -127,8 +128,9 @@ class Base extends Command {
     return res
   }
 
+  // tslint:disable-next-line:member-ordering
   async run() { }
 
 }
 
-export {Base, RedmineApi, GitlabApi, SettingsData, Question}
+export {Base, GitlabApi, Question, RedmineApi, SettingsData}
