@@ -58,7 +58,7 @@ class GitlabBase extends Base {
   protected createGitlabApiObject = (): GitlabApi => {
     this.readSettingsJson()
     if (this.settingsData === null) {
-      throw new Error('Failed to read \'settings.json\'. Please try to following command:\nredlab settings')
+      throw new Error('Failed to read \'settings.json\'. Please try to following command:\n      $ redlab settings')
     }
     return new GitlabApi(this.settingsData.g_url, this.settingsData.g_key, this.settingsData.g_owned)
   }
