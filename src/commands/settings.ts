@@ -3,7 +3,9 @@ import {flags} from '@oclif/command'
 import * as chalk from 'chalk'
 import * as fs from 'fs'
 
-import {Base, GitlabApi, Question, RedmineApi, SettingsData} from '../base'
+import {Base, Question, SettingsData} from '../base'
+import {GitlabApi} from '../gitlab-base'
+import {RedmineApi} from '../redmine-base'
 
 export default class Settings extends Base {
   static description = 'redlab settings'
@@ -100,22 +102,22 @@ export default class Settings extends Base {
 
     if (flags.check) {
       try {
-        this.log(chalk.default.cyan('start check Redmine API connect'))
+        this.log(chalk.default.cyan('Checking connection of Redmine\'s API.'))
         const rApi: RedmineApi = new RedmineApi(answers.r_url, answers.r_key)
         const rInfo = await rApi.get(rApi.getProjectsURL(), rApi.createParams())
         if (flags.log) {
           this.log(rInfo.data)
         }
-        this.log(chalk.default.cyan('start check GitLab API connect'))
+        this.log(chalk.default.cyan('Checking connection of GitLab\'s API.'))
         const gApi: GitlabApi = new GitlabApi(answers.g_url, answers.g_key, answers.g_owned)
         const gInfo = await gApi.get(gApi.getProjectsURL(), gApi.createParams())
         if (flags.log) {
           this.log(gInfo.data)
         }
-        this.log(`${chalk.default.green('success check api connect')}`)
+        this.log(`${chalk.default.green('Succeeded to checking connections of APIs.')}`)
       } catch (e) {
-        this.log(`${chalk.default.bgRed.bold('error')} ${chalk.default.red(e.message)}`)
-        this.log(`${chalk.default.red('fail check api connect')}`)
+        this.log(`${chalk.default.bgRed.bold('ERROR')} ${chalk.default.red(e.message)}`)
+        this.log(`${chalk.default.red('Failed to checking connections of APIs.')}`)
       }
     }
   }

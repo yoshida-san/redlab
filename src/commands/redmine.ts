@@ -2,9 +2,9 @@
 import {flags} from '@oclif/command'
 import * as chalk from 'chalk'
 
-import {Base, RedmineApi} from '../base'
+import {RedmineApi, RedmineBase} from '../redmine-base'
 
-export default class Redmine extends Base {
+export default class Redmine extends RedmineBase {
   static description = 'show redmine tickets info'
 
   static examples = [

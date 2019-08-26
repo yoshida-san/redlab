@@ -2,9 +2,9 @@
 import {flags} from '@oclif/command'
 import * as chalk from 'chalk'
 
-import {Base, GitlabApi} from '../base'
+import {GitlabApi, GitlabBase} from '../gitlab-base'
 
-export default class Gitlab extends Base {
+export default class Gitlab extends GitlabBase {
   static description = 'show gitlab issues info'
 
   static examples = [
@@ -16,25 +16,6 @@ export default class Gitlab extends Base {
     project: flags.string({char: 'p', description: 'project id', default: '0'}),
     issue: flags.string({char: 'i', description: 'issue id. used with project id option(-p, --project)', default: '0'}),
     detail: flags.boolean({char: 'd', description: 'show issue detail', default: false})
-  }
-
-  readonly getProjectId = async (gApi: GitlabApi) => {
-    try {
-      const projects = await gApi.get(gApi.getProjectsURL(), gApi.createParams())
-      const argsProjects = projects.data.map((obj: any) => {
-        return {name: obj.name, value: obj.id}
-      })
-      const projectsList: object = {
-        name: 'id',
-        message: 'choose project',
-        type: 'list',
-        choices: argsProjects
-      }
-      const choosed: any = await this.inquiry(projectsList)
-      return parseInt(choosed.id, 10)
-    } catch (e) {
-      throw new Error('Fail get projects')
-    }
   }
 
   readonly ValidationFlags = (flags: any) => {
