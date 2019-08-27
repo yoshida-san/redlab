@@ -24,3 +24,19 @@ describe('gitlab', () => {
   .exit(100)
   .it('exits with status 100 when not logged in')
 })
+
+describe('hello', () => {
+  test
+    .stdout()
+    .command(['hello'])
+    .it('runs hello', ctx => {
+      expect(ctx.stdout).to.contain('hello world')
+    })
+
+  test
+    .stdout()
+    .command(['hello', '--name', 'jeff'])
+    .it('runs hello --name jeff', ctx => {
+      expect(ctx.stdout).to.contain('hello jeff')
+    })
+})

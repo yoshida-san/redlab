@@ -3,9 +3,11 @@ import {flags} from '@oclif/command'
 import * as chalk from 'chalk'
 import * as fs from 'fs'
 
-import {Base, GitlabApi, Question, RedmineApi, SettingsData} from '../base'
+import {Base, Question} from '../base'
+import {GitlabApi, GitlabBase} from '../gitlab-base'
+import {RedmineApi, RedmineBase} from '../redmine-base'
 
-export default class R2g extends Base {
+export default class R2g extends Base implements GitlabBase, RedmineBase {
   static description = 'add issue from redmine'
 
   static examples = [
@@ -13,6 +15,7 @@ export default class R2g extends Base {
     `$ redlab r2g -some-example-flags`,
   ]
 
+  //TODO: 書く
   static flags = {
     help: flags.help({char: 'h'}),
     project: flags.string({char: 'p', description: 'project id. can be used with query id option(-q, --query)', default: '0'}),

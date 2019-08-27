@@ -2,6 +2,9 @@
 /* tslint:disable:no-redundant-jsdoc */
 import {ApiConnectBase, Base} from './base'
 
+/**
+ * TSDOC
+ */
 class GitlabApi extends ApiConnectBase {
   readonly apiBseUrl: string = ''
   readonly key: string = ''
@@ -28,12 +31,27 @@ class GitlabApi extends ApiConnectBase {
   }
 }
 
+/**
+ * TSDOC
+ */
 class GitlabBase extends Base {
+  /**
+   * TSDOC
+   */
+  readonly ValidationFlags = (flags: any) => {
+    if (isNaN(parseInt(flags.project, 10))) {
+      throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
+    }
+    if (isNaN(parseInt(flags.issue, 10))) {
+      throw new Error('Please enter the \'Issue ID(-i, --issue)\' by numeric.')
+    }
+  }
+
   /**
    * プロジェクトリストを取得・表示・選択し、プロジェクトIDを返す
    *
-   * @param gApi GitlabApi
-   * @returns projectId
+   * @param gApi GitlabApiのオブジェクト
+   * @returns projectIdが返る
    */
   readonly getProjectId = async (gApi: GitlabApi) => {
     try {
@@ -51,14 +69,17 @@ class GitlabBase extends Base {
       return parseInt(selected.id, 10)
       // tslint:disable-next-line:no-unused
     } catch (e) {
-      throw new Error('Failed to get List of Projects.')
+      throw new Error('Failed to get List for Projects.')
     }
   }
 
+  /**
+   * TSDOC
+   */
   protected createGitlabApiObject = (): GitlabApi => {
     this.readSettingsJson()
     if (this.settingsData === null) {
-      throw new Error('Failed to read \'settings.json\'. Please try to following command:\n      $ redlab settings')
+      throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')
     }
     return new GitlabApi(this.settingsData.g_url, this.settingsData.g_key, this.settingsData.g_owned)
   }

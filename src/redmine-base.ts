@@ -1,5 +1,8 @@
 import {ApiConnectBase, Base} from './base'
 
+/**
+ * TSDOC
+ */
 class RedmineApi extends ApiConnectBase {
   readonly apiBseUrl: string = ''
   readonly key: string = ''
@@ -38,11 +41,164 @@ class RedmineApi extends ApiConnectBase {
   }
 }
 
+/**
+ * TSDOC
+ */
 class RedmineBase extends Base {
+  /**
+   * TSDOC
+   */
+  readonly ValidationFlags = (flags: any) => {
+    if (isNaN(parseInt(flags.project, 10))) {
+      throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
+    }
+    if (isNaN(parseInt(flags.ticket, 10))) {
+      throw new Error('Please enter the \'Ticket ID(-t, --ticket)\' by numeric.')
+    }
+    if (isNaN(parseInt(flags.limit, 10))) {
+      throw new Error('Please enter the \'Query Limit(-l, --limit)\' by numeric.')
+    }
+    if (isNaN(parseInt(flags.offset, 10))) {
+      throw new Error('Please enter the \'Query ID(-o, --offset)\' by numeric.')
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly getProjectId = async (rApi: RedmineApi) => {
+    try {
+      const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, 100))
+      const argsProjects = projects.data.projects.map((obj: any) => {
+        return {name: obj.name, value: obj.id}
+      })
+      const projectsList: object = {
+        name: 'id',
+        message: 'Select Project:',
+        type: 'list',
+        choices: argsProjects
+      }
+      const selected: any = await this.inquiry(projectsList)
+      return parseInt(selected.id, 10)
+    } catch (e) {
+      throw new Error('Failed to get Project IDs.')
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly getIssueStatusId = async (rApi: RedmineApi) => {
+    try {
+      const issueStatuses = await rApi.get(rApi.getIssueStatusesURL(), rApi.createParams(null, null, 100))
+      const argsIssueStatuses: Array<object> = issueStatuses.data.issue_statuses.map((obj: any) => {
+        return {name: obj.name, value: obj.id}
+      })
+      argsIssueStatuses.unshift({id: null, name: '指定なし'})
+      const issuesStatusesList: object = {
+        name: 'id',
+        message: 'Select Issue\'s Status:',
+        type: 'list',
+        choices: argsIssueStatuses
+      }
+      const selected: any = await this.inquiry(issuesStatusesList)
+      return parseInt(selected.id, 10)
+    } catch (e) {
+      this.warn('Failed to get Issue Statuses.')
+      return null
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly getIssueTrackerrId = async (rApi: RedmineApi) => {
+    try {
+      const issueTrackers = await rApi.get(rApi.getIssueTrackersURL(), rApi.createParams(null, null, 100))
+      if (issueTrackers.data.trackers.length === 0) {
+        this.log('this project has no tracker')
+        return null
+      }
+      const argsIssueTrackers: Array<object> = issueTrackers.data.trackers.map((obj: any) => {
+        return {name: obj.name, value: obj.id}
+      })
+      argsIssueTrackers.unshift({id: null, name: '指定なし'})
+      const issuesTrackersList: object = {
+        name: 'id',
+        message: 'Select Issue\'s Trakcer:',
+        type: 'list',
+        choices: argsIssueTrackers
+      }
+      const selected: any = await this.inquiry(issuesTrackersList)
+      return parseInt(selected.id, 10)
+    } catch (e) {
+      this.warn('Failed to get Issue Trakcers.')
+      return null
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly getIssueCategoryId = async (rApi: RedmineApi, projectId: number) => {
+    try {
+      const issueCategories = await rApi.get(rApi.getIssueCategoriesURL(String(projectId)), rApi.createParams(null, null, 100))
+      if (issueCategories.data.issue_categories.length === 0) {
+        this.log('this project has no categories')
+        return null
+      }
+      const argsIssueCategories: Array<object> = issueCategories.data.issue_categories.map((obj: any) => {
+        return {name: obj.name, value: obj.id}
+      })
+      argsIssueCategories.unshift({id: null, name: '指定なし'})
+      const issuesCategoriesList: object = {
+        name: 'id',
+        message: 'Select Issue\'s Category:',
+        type: 'list',
+        choices: argsIssueCategories
+      }
+      const selected: any = await this.inquiry(issuesCategoriesList)
+      return parseInt(selected.id, 10)
+    } catch (e) {
+      this.warn('Failed to get Issue Categorys.')
+      return null
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly getQueryId = async (rApi: RedmineApi, pid: number) => {
+    const queries = await rApi.get(rApi.getQueriesURL(), rApi.createParams(null, null, 100))
+    const argsQueries = queries.data.queries.map((obj: any) => {
+      if (pid === obj.project_id) {
+        return {name: obj.name, value: obj.id}
+      } else {
+        return false
+      }
+    }).filter(Boolean)
+    if (argsQueries.length === 0) {
+      this.warn('not exists queries in project')
+      this.log('show all tickets in project')
+      return null
+    }
+    const queriesList: object = {
+      name: 'id',
+      message: 'Select Query:',
+      type: 'list',
+      choices: argsQueries
+    }
+    const selected: any = await this.inquiry(queriesList)
+    return parseInt(selected.id, 10)
+  }
+
+  /**
+   * TSDOC
+   */
   protected createRedmineApiObject = (): RedmineApi => {
     this.readSettingsJson()
     if (this.settingsData === null) {
-      throw new Error('Failed to read \'settings.json\'. Please try to following command:\nredlab settings')
+      throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')
     }
     return new RedmineApi(this.settingsData.r_url, this.settingsData.r_key)
   }

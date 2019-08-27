@@ -18,15 +18,6 @@ export default class Gitlab extends GitlabBase {
     detail: flags.boolean({char: 'd', description: 'show issue detail', default: false})
   }
 
-  readonly ValidationFlags = (flags: any) => {
-    if (isNaN(parseInt(flags.project, 10))) {
-      throw new Error('project id(-p, --project) is not a number')
-    }
-    if (isNaN(parseInt(flags.issue, 10))) {
-      throw new Error('issue id(-i, --issue) is not a number')
-    }
-  }
-
   async run() {
     const {flags} = this.parse(Gitlab)
     let projectId: number | null = null

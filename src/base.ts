@@ -50,7 +50,7 @@ class Base extends Command {
         this.settingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
       }
     } catch (e) {
-      throw new Error('Failed to read \'settings.json\'. Please try to following command:\n      $ redlab settings')
+      throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')
     }
   }
 
