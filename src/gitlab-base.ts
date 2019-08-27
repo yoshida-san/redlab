@@ -36,18 +36,6 @@ class GitlabApi extends ApiConnectBase {
  */
 class GitlabBase extends Base {
   /**
-   * TSDOC
-   */
-  readonly ValidationFlags = (flags: any) => {
-    if (isNaN(parseInt(flags.project, 10))) {
-      throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
-    }
-    if (isNaN(parseInt(flags.issue, 10))) {
-      throw new Error('Please enter the \'Issue ID(-i, --issue)\' by numeric.')
-    }
-  }
-
-  /**
    * プロジェクトリストを取得・表示・選択し、プロジェクトIDを返す
    *
    * @param gApi GitlabApiのオブジェクト
@@ -76,7 +64,7 @@ class GitlabBase extends Base {
   /**
    * TSDOC
    */
-  protected createGitlabApiObject = (): GitlabApi => {
+  public createGitlabApiObject = (): GitlabApi => {
     this.readSettingsJson()
     if (this.settingsData === null) {
       throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')

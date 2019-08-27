@@ -22,6 +22,21 @@ export default class Redmine extends RedmineBase {
     ticket: flags.string({char: 't', description: 'ticket id', default: '0'})
   }
 
+  readonly ValidationFlags = (flags: any) => {
+    if (isNaN(parseInt(flags.project, 10))) {
+      throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
+    }
+    if (isNaN(parseInt(flags.ticket, 10))) {
+      throw new Error('Please enter the \'Ticket ID(-t, --ticket)\' by numeric.')
+    }
+    if (isNaN(parseInt(flags.limit, 10))) {
+      throw new Error('Please enter the \'Query Limit(-l, --limit)\' by numeric.')
+    }
+    if (isNaN(parseInt(flags.offset, 10))) {
+      throw new Error('Please enter the \'Query ID(-o, --offset)\' by numeric.')
+    }
+  }
+
   async run() {
     const {flags} = this.parse(Redmine)
     let projectId: number | null = null

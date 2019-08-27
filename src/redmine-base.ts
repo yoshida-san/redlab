@@ -48,24 +48,6 @@ class RedmineBase extends Base {
   /**
    * TSDOC
    */
-  readonly ValidationFlags = (flags: any) => {
-    if (isNaN(parseInt(flags.project, 10))) {
-      throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
-    }
-    if (isNaN(parseInt(flags.ticket, 10))) {
-      throw new Error('Please enter the \'Ticket ID(-t, --ticket)\' by numeric.')
-    }
-    if (isNaN(parseInt(flags.limit, 10))) {
-      throw new Error('Please enter the \'Query Limit(-l, --limit)\' by numeric.')
-    }
-    if (isNaN(parseInt(flags.offset, 10))) {
-      throw new Error('Please enter the \'Query ID(-o, --offset)\' by numeric.')
-    }
-  }
-
-  /**
-   * TSDOC
-   */
   readonly getProjectId = async (rApi: RedmineApi) => {
     try {
       const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, 100))
@@ -116,7 +98,7 @@ class RedmineBase extends Base {
     try {
       const issueTrackers = await rApi.get(rApi.getIssueTrackersURL(), rApi.createParams(null, null, 100))
       if (issueTrackers.data.trackers.length === 0) {
-        this.log('this project has no tracker')
+        this.log('This project haven\'t trackers.')
         return null
       }
       const argsIssueTrackers: Array<object> = issueTrackers.data.trackers.map((obj: any) => {
@@ -144,7 +126,7 @@ class RedmineBase extends Base {
     try {
       const issueCategories = await rApi.get(rApi.getIssueCategoriesURL(String(projectId)), rApi.createParams(null, null, 100))
       if (issueCategories.data.issue_categories.length === 0) {
-        this.log('this project has no categories')
+        this.log('This project haven\'t categories.')
         return null
       }
       const argsIssueCategories: Array<object> = issueCategories.data.issue_categories.map((obj: any) => {
@@ -195,7 +177,7 @@ class RedmineBase extends Base {
   /**
    * TSDOC
    */
-  protected createRedmineApiObject = (): RedmineApi => {
+  public createRedmineApiObject = (): RedmineApi => {
     this.readSettingsJson()
     if (this.settingsData === null) {
       throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')
