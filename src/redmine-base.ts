@@ -45,6 +45,9 @@ class RedmineApi extends ApiConnectBase {
  * TSDOC
  */
 class RedmineBase extends Base {
+  constructor() {
+    super()
+  }
   /**
    * TSDOC
    */

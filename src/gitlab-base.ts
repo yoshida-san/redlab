@@ -35,6 +35,9 @@ class GitlabApi extends ApiConnectBase {
  * TSDOC
  */
 class GitlabBase extends Base {
+  constructor() {
+    super()
+  }
   /**
    * プロジェクトリストを取得・表示・選択し、プロジェクトIDを返す
    *
@@ -58,6 +61,15 @@ class GitlabBase extends Base {
       // tslint:disable-next-line:no-unused
     } catch (e) {
       throw new Error('Failed to get List for Projects.')
+    }
+  }
+
+  readonly postNewIssue = async (gApi: GitlabApi, projectsId: string, issuesTitle: string) => {
+    try {
+      //書きかけ
+      // tslint:disable-next-line:no-unused
+    } catch (e) {
+      throw new Error('Failed to Post new Issues.')
     }
   }
 

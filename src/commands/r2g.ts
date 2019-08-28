@@ -7,11 +7,10 @@ import {GitlabApi, GitlabBase} from '../gitlab-base'
 import {RedmineApi, RedmineBase} from '../redmine-base'
 
 export default class R2g extends Base {
-  static description = 'R2g\'s description'
+  static description = 'r2g\'s description'
 
   static examples = [
     `$ redlab r2g -t=12345`,
-    `$ redlab r2g -some-example-flags`,
   ]
 
   //TODO: 書く
@@ -22,12 +21,17 @@ export default class R2g extends Base {
     limit: flags.string({char: 'l', description: 'number of issues per page(max: 100)', default: '100'}),
     offset: flags.string({char: 'o', description: 'skip this number of issues in response', default: '0'}),
     detail: flags.boolean({char: 'd', description: 'show ticket detail', default: false}),
-    ticket: flags.string({char: 't', description: 'ticket id', default: '0'})
+    ticket: flags.string({char: 't', description: 'ticket id', default: '0'}),
   }
 
   readonly ValidationFlags = (flags: any) => {
-    //flags validation
+    return true
   }
+
+  readonly CompareTitleString = (gitlab: any, redmine: any) => {
+    return gitlab.title.indexOf(`r${redmine.id}_`) === 0 ? false : true
+  }
+
   async run() {
     const {flags} = this.parse(R2g)
     //git
@@ -51,8 +55,8 @@ export default class R2g extends Base {
 
     try {
       //オブジェクト初期化をしたい
-      const gBase!: GitlabBase
-      const rBase!: RedmineBase
+      const gBase: GitlabBase = new GitlabBase()
+      const rBase: RedmineBase = new RedmineBase()
       const gApi: GitlabApi = gBase.createGitlabApiObject()
       const rApi: RedmineApi = rBase.createRedmineApiObject()
 
@@ -68,24 +72,31 @@ export default class R2g extends Base {
         trackerId = await rBase.getIssueTrackerrId(rApi)
       }
 
-      // GitlabのIssues取得
-      this.log('Starting...')
+      // Issues一覧取得処理
+      this.log('running...')
       const gitlabIssuesData: any = await gApi.get(gApi.getIssuesURL(gitlabProjectId), gApi.createParams())
-      const gitlabIssuesList: Array<string> = gitlabIssuesData.data.map((obj: any) => {
-        return obj
-      })
-      gitlabIssuesList.forEach(issue => {
-        this.log(`${issue.state}`)
+      const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
+      const notExistsTickets: Array<string> = redmineTicketsData.data.issues.map((ticket: any) => {
+        /*let returns = false
+        gitlabIssuesData.data.forEach(issue => {
+          if (this.CompareTitleString(issue, ticket)) {
+            returns = true
+          }
+        })
+        if (!returns) return ticket*/
+        if (gitlabIssuesData.data.filter((element: Element) => {
+          this.log(`${element}`)
+          return this.CompareTitleString(element, ticket)
+        })) {
+          this.log("t")
+        } else {
+          this.log("f")
+        }
       })
 
-      // RedmineのIssues取得
-      this.log('Starting...')
-      const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
-      const redmineTicketsList: Array<string> = redmineTicketsData.data.issues.map((obj: any) => {
-        return obj
-      })
-      redmineTicketsList.forEach(ticket => {
-        this.log(`${ticket.status.name}`)
+      // 存在しないIssues一覧
+      notExistsTickets.forEach(ticket => {
+        this.log(`${ticket.id}`)
       })
     } catch (e) {
       this.error(`${e.message}`)

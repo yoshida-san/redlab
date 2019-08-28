@@ -60,7 +60,7 @@ export default class Redmine extends RedmineBase {
       const rApi: RedmineApi = this.createRedmineApiObject()
 
       if (flags.ticket !== '0') {
-        const ticketData = await rApi.get(rApi.getIssueURL(flags.ticket), rApi.createParams())
+        const ticketData: any = await rApi.get(rApi.getIssueURL(flags.ticket), rApi.createParams())
         this.log(ticketData.data.issue)
         return
 
