@@ -63,7 +63,7 @@ class RedmineBase extends Base {
         type: 'list',
         choices: argsProjects
       }
-      const selected: any = await this.inquiry(projectsList)
+      const selected: any = await this.inquirer(projectsList)
       return parseInt(selected.id, 10)
     } catch (e) {
       throw new Error('Failed to get Project IDs.')
@@ -86,7 +86,7 @@ class RedmineBase extends Base {
         type: 'list',
         choices: argsIssueStatuses
       }
-      const selected: any = await this.inquiry(issuesStatusesList)
+      const selected: any = await this.inquirer(issuesStatusesList)
       return parseInt(selected.id, 10)
     } catch (e) {
       this.warn('Failed to get Issue Statuses.')
@@ -114,7 +114,7 @@ class RedmineBase extends Base {
         type: 'list',
         choices: argsIssueTrackers
       }
-      const selected: any = await this.inquiry(issuesTrackersList)
+      const selected: any = await this.inquirer(issuesTrackersList)
       return parseInt(selected.id, 10)
     } catch (e) {
       this.warn('Failed to get Issue Trakcers.')
@@ -142,7 +142,7 @@ class RedmineBase extends Base {
         type: 'list',
         choices: argsIssueCategories
       }
-      const selected: any = await this.inquiry(issuesCategoriesList)
+      const selected: any = await this.inquirer(issuesCategoriesList)
       return parseInt(selected.id, 10)
     } catch (e) {
       this.warn('Failed to get Issue Categorys.')
@@ -173,7 +173,7 @@ class RedmineBase extends Base {
       type: 'list',
       choices: argsQueries
     }
-    const selected: any = await this.inquiry(queriesList)
+    const selected: any = await this.inquirer(queriesList)
     return parseInt(selected.id, 10)
   }
 

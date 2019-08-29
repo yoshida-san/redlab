@@ -60,7 +60,7 @@ class Base extends Command {
     }
   }
 
-  protected inquiry = async (param: any): Promise<any> => {
+  protected inquirer = async (param: any): Promise<any> => {
     const getResponse = () => inq.prompt(param)
     const res: any = await getResponse()
     return res

@@ -73,31 +73,22 @@ export default class R2g extends Base {
       }
 
       // Issues一覧取得処理
-      this.log('running...')
+      this.log('Getting the diff...')
       const gitlabIssuesData: any = await gApi.get(gApi.getIssuesURL(gitlabProjectId), gApi.createParams())
       const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
-      const notExistsTickets: Array<string> = redmineTicketsData.data.issues.map((ticket: any) => {
-        /*let returns = false
-        gitlabIssuesData.data.forEach(issue => {
+      const notExistsTickets: Array<string> = gitlabIssuesData.data.map((issue: any) => {
+        return redmineTicketsData.data.issues.map((ticket: any) => {
           if (this.CompareTitleString(issue, ticket)) {
-            returns = true
+            return ticket
           }
-        })
-        if (!returns) return ticket*/
-        if (gitlabIssuesData.data.filter((element: Element) => {
-          this.log(`${element}`)
-          return this.CompareTitleString(element, ticket)
-        })) {
-          this.log("t")
-        } else {
-          this.log("f")
-        }
+        }).filter((ticketid: any) => ticketid)
+      }).slice(-1)[0]
+
+      notExistsTickets.forEach((tickets: any) => {
+        this.log(`未登録: ${tickets.id} - ${tickets.subject}`)
       })
 
-      // 存在しないIssues一覧
-      notExistsTickets.forEach(ticket => {
-        this.log(`${ticket.id}`)
-      })
+      // エラーキャッチ
     } catch (e) {
       this.error(`${e.message}`)
     }

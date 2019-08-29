@@ -56,7 +56,7 @@ class GitlabBase extends Base {
         type: 'list',
         choices: argsProjects
       }
-      const selected: any = await this.inquiry(projectsList)
+      const selected: any = await this.inquirer(projectsList)
       return parseInt(selected.id, 10)
       // tslint:disable-next-line:no-unused
     } catch (e) {

@@ -81,7 +81,7 @@ export default class Settings extends Base {
       questions.push(updateDefault(this.questions.g_owned))
     }
 
-    const answers: SettingsData = await this.inquiry(questions)
+    const answers: SettingsData = await this.inquirer(questions)
 
     try {
       fs.writeFileSync(this.settingsFilePath, JSON.stringify(answers, null, '  '))
