@@ -23,18 +23,10 @@ export default class Redmine extends RedmineBase {
   }
 
   readonly ValidationFlags = (flags: any) => {
-    if (isNaN(parseInt(flags.project, 10))) {
-      throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
-    }
-    if (isNaN(parseInt(flags.ticket, 10))) {
-      throw new Error('Please enter the \'Ticket ID(-t, --ticket)\' by numeric.')
-    }
-    if (isNaN(parseInt(flags.limit, 10))) {
-      throw new Error('Please enter the \'Query Limit(-l, --limit)\' by numeric.')
-    }
-    if (isNaN(parseInt(flags.offset, 10))) {
-      throw new Error('Please enter the \'Query ID(-o, --offset)\' by numeric.')
-    }
+    if (isNaN(parseInt(flags.project, 10))) throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
+    if (isNaN(parseInt(flags.ticket, 10))) throw new Error('Please enter the \'Ticket ID(-t, --ticket)\' by numeric.')
+    if (isNaN(parseInt(flags.limit, 10))) throw new Error('Please enter the \'Query Limit(-l, --limit)\' by numeric.')
+    if (isNaN(parseInt(flags.offset, 10))) throw new Error('Please enter the \'Query ID(-o, --offset)\' by numeric.')
   }
 
   async run() {
@@ -83,7 +75,6 @@ export default class Redmine extends RedmineBase {
         statusId = await this.getIssueStatusId(rApi)
         categoryId = await this.getIssueCategoryId(rApi, projectId)
         trackerId = await this.getIssueTrackerrId(rApi)
-
       }
 
       this.log(`getting tickets info in project ...`)

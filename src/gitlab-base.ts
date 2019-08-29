@@ -20,8 +20,9 @@ class GitlabApi extends ApiConnectBase {
   }
 
   public getProjectsURL = (): string => `${this.apiBseUrl}${this.projectsUrl}`
-  public getIssuesURL = (projectId: number): string => `${this.apiBseUrl}/${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
-  public getIssueURL = (projectId: number, issueId: number): string => `${this.apiBseUrl}/${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
+  public getIssuesURL = (projectId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
+  public getIssueURL = (projectId: number, issueId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
+  public postIssueURL = (projectId: number, issueTitle: string): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}?title=${issueTitle}`
 
   public createParams = (): object => {
     return {
@@ -64,12 +65,39 @@ class GitlabBase extends Base {
     }
   }
 
-  readonly postNewIssue = async (gApi: GitlabApi, projectsId: string, issuesTitle: string) => {
+  /**
+   * TSDOC
+   */
+  readonly selectNewIssue = async (issues: Array<string>) => {
     try {
-      //書きかけ
+      const argsIssues = issues.map((obj: any) => {
+        const title = ` ${obj.id}: ${obj.subject}`
+        return {name: title, value: obj.id}
+      })
+      const issueList: object = {
+        name: 'id',
+        message: 'Select Issue:',
+        type: 'checkbox',
+        choices: argsIssues
+      }
+      const selected: any = await this.inquirer(issueList)
+      return selected
       // tslint:disable-next-line:no-unused
     } catch (e) {
-      throw new Error('Failed to Post new Issues.')
+      throw new Error('Failed to show new Issues prompt.')
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly postNewIssue = async (gApi: GitlabApi, projectsId: number, issueTitle: string) => {
+    try {
+      await gApi.post(gApi.postIssueURL(projectsId, issueTitle), gApi.createParams)
+      return true
+      // tslint:disable-next-line:no-unused
+    } catch (e) {
+      throw new Error(`${e.message}`)
     }
   }
 

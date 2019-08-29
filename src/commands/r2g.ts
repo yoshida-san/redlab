@@ -1,6 +1,5 @@
 /* tslint:disable:quotemark */
 import {flags} from '@oclif/command'
-import * as chalk from 'chalk'
 
 import {Base} from '../base'
 import {GitlabApi, GitlabBase} from '../gitlab-base'
@@ -10,22 +9,28 @@ export default class R2g extends Base {
   static description = 'r2g\'s description'
 
   static examples = [
-    `$ redlab r2g -t=12345`,
+    `$ redlab r2g -g=5134`,
+    `$ redlab r2g -qr=375`,
   ]
 
-  //TODO: 書く
   static flags = {
     help: flags.help({char: 'h'}),
-    project: flags.string({char: 'p', description: 'project id. can be used with query id option(-q, --query)', default: '0'}),
-    query: flags.boolean({char: 'q', description: 'use query', default: false}),
-    limit: flags.string({char: 'l', description: 'number of issues per page(max: 100)', default: '100'}),
-    offset: flags.string({char: 'o', description: 'skip this number of issues in response', default: '0'}),
-    detail: flags.boolean({char: 'd', description: 'show ticket detail', default: false}),
-    ticket: flags.string({char: 't', description: 'ticket id', default: '0'}),
+    gproject: flags.string({char: 'g', description: '[GitLab] Project ID', default: '0'}),
+    issue: flags.string({char: 'i', description: '[GitLab] Issue ID. Using with Project ID option(-g, --gproject).', default: '0'}),
+    rproject: flags.string({char: 'r', description: '[Redmine] Project ID. Only can using with Query option(-q, --query).', default: '0'}),
+    ticket: flags.string({char: 't', description: '[Redmine] Ticket ID.', default: '0'}),
+    query: flags.boolean({char: 'q', description: '[Redmine] Use Query.', default: false}),
+    limit: flags.string({char: 'l', description: '[Redmine] Number of issues per page(MAX: 100).', default: '100'}),
+    offset: flags.string({char: 'o', description: '[Redmine] Skip this number of issues in response.', default: '0'})
   }
 
   readonly ValidationFlags = (flags: any) => {
-    return true
+    if (isNaN(parseInt(flags.gproject, 10))) throw new Error('Please enter the \'GitLab Project ID(-g, --groject)\' by numeric.')
+    if (isNaN(parseInt(flags.issue, 10))) throw new Error('Please enter the \'Issue ID(-i, --issue)\' by numeric.')
+    if (isNaN(parseInt(flags.rproject, 10))) throw new Error('Please enter the \'Redmine Project ID(-r, --rproject)\' by numeric.')
+    if (isNaN(parseInt(flags.ticket, 10))) throw new Error('Please enter the \'Ticket ID(-t, --ticket)\' by numeric.')
+    if (isNaN(parseInt(flags.limit, 10))) throw new Error('Please enter the \'Query Limit(-l, --limit)\' by numeric.')
+    if (isNaN(parseInt(flags.offset, 10))) throw new Error('Please enter the \'Query ID(-o, --offset)\' by numeric.')
   }
 
   readonly CompareTitleString = (gitlab: any, redmine: any) => {
@@ -34,10 +39,10 @@ export default class R2g extends Base {
 
   async run() {
     const {flags} = this.parse(R2g)
-    //git
+    // for GitLab
     let gitlabProjectId: number | null = null
     let issueId: number | null = null
-    //redlab
+    // for Redmine
     let redmineProjectId: number | null = null
     let statusId: number | null = null
     let categoryId: number | null = null
@@ -48,6 +53,8 @@ export default class R2g extends Base {
 
     try {
       this.ValidationFlags(flags)
+      limit = parseInt(flags.limit, 10)
+      offset = parseInt(flags.offset, 10)
     } catch (e) {
       this.error(`${e.message}`)
       return
@@ -61,7 +68,7 @@ export default class R2g extends Base {
       const rApi: RedmineApi = rBase.createRedmineApiObject()
 
       if (false) {
-        //とりあえず情報取得のため
+        //とりあえず情報取得のため省略
       } else {
         //Gitlab
         gitlabProjectId = await gBase.getProjectId(gApi)
@@ -81,12 +88,18 @@ export default class R2g extends Base {
           if (this.CompareTitleString(issue, ticket)) {
             return ticket
           }
-        }).filter((ticketid: any) => ticketid)
+        }).filter((ticket: any) => ticket)
       }).slice(-1)[0]
 
-      notExistsTickets.forEach((tickets: any) => {
-        this.log(`未登録: ${tickets.id} - ${tickets.subject}`)
+      const selected = await gBase.selectNewIssue(notExistsTickets)
+      selected.id.forEach((selected: any) => {
+        //notExistsTickets.idとselected.idが一致した場合のnotExistsTickets.subjectがほしい
+        //
+        this.log(`${selected}`)
       })
+
+      const issueMessage = `hello`
+      await gBase.postNewIssue(gApi, gitlabProjectId, issueMessage)
 
       // エラーキャッチ
     } catch (e) {
