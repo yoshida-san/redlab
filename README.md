@@ -39,7 +39,7 @@ $ ./redlab [subcommand and args]
 ./redlab r2g
 ```
 
-Docker実行コマンドは同梱のredlabバイナリーをpathの通っている場所に設置することで、redlabディレクトリ外でも利用できます。
+Docker実行コマンドは同梱のredlabバイナリーをpathの通っている場所に設置しての利用ができます。
 
 ```bash
 $ cp ./redlab /path/foo/redlab
