@@ -2,8 +2,8 @@
 import {flags} from '@oclif/command'
 
 import {Base} from '../base'
-import {GitlabApi, GitlabBase} from '../gitlab-base'
-import {RedmineApi, RedmineBase} from '../redmine-base'
+import {GitlabApi, GitlabR2GBase} from '../gitlab-base'
+import {RedmineApi, RedmineR2GBase} from '../redmine-base'
 
 export default class R2g extends Base {
   static description = 'r2g\'s description'
@@ -61,9 +61,8 @@ export default class R2g extends Base {
     }
 
     try {
-      //オブジェクト初期化をしたい
-      const gBase: GitlabBase = new GitlabBase()
-      const rBase: RedmineBase = new RedmineBase()
+      const gBase: GitlabR2GBase = new GitlabR2GBase()
+      const rBase: RedmineR2GBase = new RedmineR2GBase()
       const gApi: GitlabApi = gBase.createGitlabApiObject()
       const rApi: RedmineApi = rBase.createRedmineApiObject()
 
@@ -85,20 +84,35 @@ export default class R2g extends Base {
       const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
       const notExistsTickets: Array<string> = gitlabIssuesData.data.map((issue: any) => {
         return redmineTicketsData.data.issues.map((ticket: any) => {
-          if (this.CompareTitleString(issue, ticket)) {
-            return ticket
-          }
+          if (this.CompareTitleString(issue, ticket)) return ticket
         }).filter((ticket: any) => ticket)
       }).slice(-1)[0]
 
       const selected = await gBase.selectNewIssue(notExistsTickets)
       selected.id.forEach((selected: any) => {
         //notExistsTickets.idとselected.idが一致した場合のnotExistsTickets.subjectがほしい
-        //
-        this.log(`${selected}`)
+        //雑実装例
+
+        // こんな感じじゃダメっすかね？（動かして確認してないッス）→動きました→（ ＾ω＾）
+        const issueData: any = notExistsTickets.find((data: any) => data.id === selected)
+        this.log(`${issueData.subject}`)
+        //const issueMessage = encodeURIComponent(`r${issueData.id}_${issueData.subject}`)
+        //await gBase.postNewIssue(gApi, gitlabProjectId, issueMessage)
+        // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+
+        // 試してみました（jsfiddle）
+        // findでいけると思います。
+        // https://jsfiddle.net/jsfiddle_yoshida/syb8k1t2/
+
+        //notExistsTickets.forEach((ticket: any) => {
+        //  if (selected === ticket.id) {
+        //    this.log(`r${ticket.id}_${ticket.subject}`)
+        //  }
+        //})
       })
 
-      const issueMessage = `hello`
+      const issueMessage = encodeURIComponent(`hello my world`)
+      this.log(issueMessage)
       await gBase.postNewIssue(gApi, gitlabProjectId, issueMessage)
 
       // エラーキャッチ

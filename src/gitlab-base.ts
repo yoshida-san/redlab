@@ -36,9 +36,6 @@ class GitlabApi extends ApiConnectBase {
  * TSDOC
  */
 class GitlabBase extends Base {
-  constructor() {
-    super()
-  }
   /**
    * プロジェクトリストを取得・表示・選択し、プロジェクトIDを返す
    *
@@ -93,7 +90,7 @@ class GitlabBase extends Base {
    */
   readonly postNewIssue = async (gApi: GitlabApi, projectsId: number, issueTitle: string) => {
     try {
-      await gApi.post(gApi.postIssueURL(projectsId, issueTitle), gApi.createParams)
+      await gApi.post(gApi.postIssueURL(projectsId, issueTitle), gApi.createParams())
       return true
       // tslint:disable-next-line:no-unused
     } catch (e) {
@@ -113,4 +110,10 @@ class GitlabBase extends Base {
   }
 }
 
-export {GitlabApi, GitlabBase}
+class GitlabR2GBase extends GitlabBase {
+  constructor() {
+    super()
+  }
+}
+
+export {GitlabApi, GitlabBase, GitlabR2GBase}

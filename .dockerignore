@@ -1,0 +1,7 @@
+node_modules
+npm-debug.log
+src/data/*.json
+redlab
+build
+LICENSE
+README.md

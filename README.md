@@ -21,6 +21,50 @@ $ ./bin/run settings -h
 $ ./bin/run redmine -h
 ```
 
+### Using with Docker
+Dockerを利用して、既存の環境を壊さずアプリケーションを利用することができます。
+
+```bash
+$ git clone -b develop https://github.com/kounakay/redlab
+$ cd redlab
+
+# Redlabコンテナーのビルド
+$ ./build
+
+# Redlabの実行
+$ ./redlab [subcommand and args]
+
+# Example
+./redlab settings -h
+./redlab r2g
+
+# Redlabコンテナーの削除
+docker rmi redlab
+
+# Redlab設定情報の削除
+docker volume rm config
+```
+
+Docker実行コマンドは同梱のredlabバイナリーをpathの通っている場所に設置することで、redlabディレクトリ外でも利用できます。
+
+```bash
+$ cp ./redlab /path/foo/redlab
+$ redlab [subcommands and args]
+
+# Example
+$ redlab settings
+$ redlab r2g
+```
+
+dockerコマンドを直接利用する場合
+
+```bash
+# Build docker container
+$ docker build -t redlab .
+# Running command
+$ docker run -it -v config:/usr/src/app/src/data --rm redlab [subcommand and args]
+```
+
 ## settings command
 
 ```bash
