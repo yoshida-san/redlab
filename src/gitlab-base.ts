@@ -30,6 +30,12 @@ class GitlabApi extends ApiConnectBase {
       owned: this.owned
     }
   }
+
+  public createPostParams = (): object => {
+    return {
+      private_token: this.key
+    }
+  }
 }
 
 /**
