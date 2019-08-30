@@ -37,12 +37,6 @@ $ ./redlab [subcommand and args]
 # Example
 ./redlab settings -h
 ./redlab r2g
-
-# Redlabコンテナーの削除
-docker rmi redlab
-
-# Redlab設定情報の削除
-docker volume rm config
 ```
 
 Docker実行コマンドは同梱のredlabバイナリーをpathの通っている場所に設置することで、redlabディレクトリ外でも利用できます。
@@ -123,4 +117,21 @@ OPTIONS
 
 EXAMPLE
   $ redlab gitlab
+```
+
+## r2g Command
+
+```bash
+$ redlab r2g -h
+```
+
+## Uninstall(for Docker)
+docker利用の場合、本体のイメージと設定用ボリュームが作成されています。
+
+```bash
+# Redlabイメージの削除
+docker rmi redlab
+
+# Redlab設定情報の削除
+docker volume rm config
 ```
