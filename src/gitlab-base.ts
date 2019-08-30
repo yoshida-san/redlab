@@ -30,6 +30,12 @@ class GitlabApi extends ApiConnectBase {
       owned: this.owned
     }
   }
+
+  public createPostParams = (): object => {
+    return {
+      private_token: this.key
+    }
+  }
 }
 
 /**
@@ -93,7 +99,7 @@ class GitlabBase extends Base {
    */
   readonly postNewIssue = async (gApi: GitlabApi, projectsId: number, issueTitle: string) => {
     try {
-      await gApi.post(gApi.postIssueURL(projectsId, issueTitle), gApi.createParams)
+      await gApi.post(gApi.postIssueURL(projectsId, issueTitle), gApi.createPostParams())
       return true
       // tslint:disable-next-line:no-unused
     } catch (e) {
