@@ -1,2 +1,3 @@
 #!/bin/sh
-docker run -it -v config:/usr/src/app/src/data --rm redlab $@
+docker=`which docker`
+$docker run -it -v config:/usr/src/app/src/data --rm redlab $@
