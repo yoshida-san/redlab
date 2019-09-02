@@ -26,6 +26,7 @@
     "@types/node": "^10.14.15",
     "@types/promise": "^7.1.30",
     "Promise": "^1.0.5",
+    "array-foreach-async": "^1.0.1",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "nock": "^10.0.6",

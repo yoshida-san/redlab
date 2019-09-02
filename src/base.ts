@@ -37,9 +37,7 @@ class ApiConnectBase {
   }
   async post(url: string, params: object) {
     // tslint:disable-next-line:no-return-await
-    return await axios.post(url, {
-      params
-    })
+    return await axios.post(url, params)
   }
 }
 

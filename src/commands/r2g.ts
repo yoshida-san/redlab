@@ -1,5 +1,6 @@
 /* tslint:disable:quotemark */
 import {flags} from '@oclif/command'
+require('array-foreach-async')
 
 import {Base} from '../base'
 import {GitlabApi, GitlabR2GBase} from '../gitlab-base'
@@ -88,16 +89,15 @@ export default class R2g extends Base {
         }).filter((ticket: any) => ticket)
       }).slice(-1)[0]
 
+      // Issues投稿処理
       const selected = await gBase.selectNewIssue(notExistsTickets)
-      selected.id.forEach((selected: any) => {
+      await selected.id.forEachAsync(async (selected: any) => {
         const issueData: any = notExistsTickets.find((data: any) => data.id === selected)
-        this.log(`${issueData.subject}`)
+        const issueMessage = `r${issueData.id}_${issueData.subject}`
         await gBase.postNewIssue(gApi, gitlabProjectId, issueMessage)
       })
 
-      const issueMessage = `helllllll my world`
-      this.log(issueMessage)
-      await gBase.postNewIssue(gApi, gitlabProjectId, issueMessage)
+      this.log(`All done.`)
 
       // エラーキャッチ
     } catch (e) {

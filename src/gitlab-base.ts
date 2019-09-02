@@ -22,7 +22,7 @@ class GitlabApi extends ApiConnectBase {
   public getProjectsURL = (): string => `${this.apiBseUrl}${this.projectsUrl}`
   public getIssuesURL = (projectId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
   public getIssueURL = (projectId: number, issueId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
-  public postIssueURL = (projectId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}?private_token=${this.key}`
+  public postIssueURL = (projectId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
 
   public createParams = (): object => {
     return {
@@ -31,11 +31,11 @@ class GitlabApi extends ApiConnectBase {
     }
   }
 
-  public createIssueParams = (issueTitle: string): object => {
-    const json = `{
-"title": "${issueTitle}"
-}`
-    return JSON.parse(json)
+  public createIssueBody = (title: string): object => {
+    return {
+      private_token: this.key,
+      title
+    }
   }
 }
 
@@ -97,11 +97,11 @@ class GitlabBase extends Base {
    */
   readonly postNewIssue = async (gApi: GitlabApi, projectsId: number, issueTitle: string) => {
     try {
-      await gApi.post(gApi.postIssueURL(projectsId), gApi.createIssueParams(issueTitle))
+      await gApi.post(gApi.postIssueURL(projectsId), gApi.createIssueBody(issueTitle))
       return true
       // tslint:disable-next-line:no-unused
     } catch (e) {
-      throw new Error(`${e.message}`)
+      throw new Error(`Failed to create New Issues.`)
     }
   }
 
