@@ -38,9 +38,9 @@ export default class R2g extends Base {
     return gitlab.title.indexOf(`r${redmine.id}_`) === 0 ? false : true
   }
 
-  readonly feIssueData = (gitlabObject: object, redmine: any) => {
+  readonly feIssueData = (gitlabObject: any, redmine: any) => {
     gitlabObject.data.forEach((gitlab: any) => {
-      return this.CompareTitleString(gitlab, redmine)
+      return gitlab.title.indexOf(`r${redmine.id}_`) === 0 ? false : true
     })
   }
 
@@ -89,7 +89,7 @@ export default class R2g extends Base {
       this.log('Getting the diff...')
       const gitlabIssuesData: any = await gApi.get(gApi.getIssuesURL(gitlabProjectId), gApi.createParams())
       const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
-      //バグがあるため修正(うまく差分を抜き出せていない)
+      //バグコード(うまく差分を抜き出せていない)
       //const notExistsTickets: Array<string> = gitlabIssuesData.data.map((issue: any) => {
       //  return redmineTicketsData.data.issues.map((ticket: any) => {
       //    if (this.CompareTitleString(issue, ticket)) return ticket
@@ -101,9 +101,13 @@ export default class R2g extends Base {
         //  //return gitlab.title.indexOf(`r${redmine.id}_`) === 0 ? false : true
         //  return this.CompareTitleString(gitlab, redmine)
         //})
-        this.log(`${redmine.id}`)
-        this.feIssueData(gitlabIssuesData, redmine)
-        this.log(`${gitlabIssuesData}`)
+        const regex: RegExp = new RegExp(`r${redmine.id}_.*`)
+        //this.log(`${redmine.id}`)
+        //this.log(`${JSON.stringify(gitlabIssuesData)}`)
+        //const ret: any = this.feIssueData(gitlabIssuesData, redmine)
+        //this.log(`${ret}`)
+        //return ret
+        if (!gitlabIssuesData.search(regex)) return true
         //gitlabIssuesData.data.title.indexOf(`r${redmine.id}_`) !== 0
         //const gitlab: any = gitlabIssuesData.data.find((data: any) => data.id === redmine.id)
         //gitlab.title.indexOf(`r${redmine.id}_`) === 0
