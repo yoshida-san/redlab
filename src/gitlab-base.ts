@@ -57,7 +57,7 @@ class GitlabBase extends Base {
       })
       const projectsList: object = {
         name: 'id',
-        message: 'Select Project:',
+        message: 'Select Gitlab\'s Project:',
         type: 'list',
         choices: argsProjects
       }
@@ -80,7 +80,7 @@ class GitlabBase extends Base {
       })
       const issueList: object = {
         name: 'id',
-        message: 'Select Issue:',
+        message: 'Select target Issues if you want post:',
         type: 'checkbox',
         choices: argsIssues
       }

@@ -89,43 +89,12 @@ export default class R2g extends Base {
       this.log('Getting the diff...')
       const gitlabIssuesData: any = await gApi.get(gApi.getIssuesURL(gitlabProjectId), gApi.createParams())
       const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
-      //バグコード(うまく差分を抜き出せていない)
-      //const notExistsTickets: Array<string> = gitlabIssuesData.data.map((issue: any) => {
-      //  return redmineTicketsData.data.issues.map((ticket: any) => {
-      //    if (this.CompareTitleString(issue, ticket)) return ticket
-      //  }).filter((ticket: any) => ticket)
-      //}).slice(-1)[0]
 
-      const notExistsTickets: any = redmineTicketsData.data.issues.filter((redmine: any) => {
-        //gitlabIssuesData.data.forEach((gitlab: any) => {
-        //  //return gitlab.title.indexOf(`r${redmine.id}_`) === 0 ? false : true
-        //  return this.CompareTitleString(gitlab, redmine)
-        //})
-        const regex: RegExp = new RegExp(`r${redmine.id}_.*`)
-        //this.log(`${redmine.id}`)
-        //this.log(`${JSON.stringify(gitlabIssuesData)}`)
-        //const ret: any = this.feIssueData(gitlabIssuesData, redmine)
-        //this.log(`${ret}`)
-        //return ret
-        if (!gitlabIssuesData.search(regex)) return true
-        //gitlabIssuesData.data.title.indexOf(`r${redmine.id}_`) !== 0
-        //const gitlab: any = gitlabIssuesData.data.find((data: any) => data.id === redmine.id)
-        //gitlab.title.indexOf(`r${redmine.id}_`) === 0
-        //this.CompareTitleString(gitlab, redmine)
-      })
-
-      //const result: any = gitlabIssuesData.data.map((gitlab: any) => {
-      //  for (let redmine in this) {
-      //    if (gitlab.title.indexOf(`r${redmine.id}_`) !== 0) return this[gitlab.id]
-      //  }
-      //}, redmineTicketsData.data.issues)
-
-      notExistsTickets.forEach((ne: any) => {
-        ne.forEach((ni: any) => {
-          this.log(`${ni.id}`)
-        })
-        this.log(`${ne.id}`)
-      })
+      // 突合処理
+      const notExistsTickets: Array<string> = redmineTicketsData.data.issues.map((redmine: any) => {
+        const issue = gitlabIssuesData.data.find((gitlab: any) => gitlab.title.indexOf(`r${redmine.id}_`) === 0)
+        return (issue === undefined) ? redmine : false
+      }).filter((redmine: any) => redmine !== false)
 
       // Issues投稿処理
       const selected = await gBase.selectNewIssue(notExistsTickets)

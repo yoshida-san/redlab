@@ -56,7 +56,7 @@ class RedmineBase extends Base {
       })
       const projectsList: object = {
         name: 'id',
-        message: 'Select Project:',
+        message: 'Select Redmine\'s Project:',
         type: 'list',
         choices: argsProjects
       }
@@ -79,7 +79,7 @@ class RedmineBase extends Base {
       argsIssueStatuses.unshift({id: null, name: '指定なし'})
       const issuesStatusesList: object = {
         name: 'id',
-        message: 'Select Issue\'s Status:',
+        message: 'Select Redmine Issue\'s Status:',
         type: 'list',
         choices: argsIssueStatuses
       }
@@ -107,7 +107,7 @@ class RedmineBase extends Base {
       argsIssueTrackers.unshift({id: null, name: '指定なし'})
       const issuesTrackersList: object = {
         name: 'id',
-        message: 'Select Issue\'s Trakcer:',
+        message: 'Select Redmine Issue\'s Trakcer:',
         type: 'list',
         choices: argsIssueTrackers
       }
@@ -135,7 +135,7 @@ class RedmineBase extends Base {
       argsIssueCategories.unshift({id: null, name: '指定なし'})
       const issuesCategoriesList: object = {
         name: 'id',
-        message: 'Select Issue\'s Category:',
+        message: 'Select Redmine Issue\'s Category:',
         type: 'list',
         choices: argsIssueCategories
       }
@@ -166,7 +166,7 @@ class RedmineBase extends Base {
     }
     const queriesList: object = {
       name: 'id',
-      message: 'Select Query:',
+      message: 'Select Redmine\'s Query:',
       type: 'list',
       choices: argsQueries
     }
