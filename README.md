@@ -25,7 +25,7 @@ $ ./bin/run redmine -h
 Dockerを利用して、既存の環境を壊さずアプリケーションを利用することができます。
 
 ```bash
-$ git clone -b develop https://github.com/kounakay/redlab
+$ git clone https://github.com/kounakay/redlab
 $ cd redlab
 
 # Redlabコンテナーのビルド
