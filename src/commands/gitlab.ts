@@ -53,8 +53,6 @@ export default class Gitlab extends GitlabBase {
 
       this.log(`getting issues info in project ...`)
       const issuesData: any = await this.getIssuesData(gApi, projectId)
-      //this.log(`${issuesData}`)
-      this.log(`${JSON.stringify(issuesData)}`)
       const issuesList: Array<string> = issuesData.map((obj: any) => {
         return (flags.detail)
           ? `${chalk.default.bgBlue(` ${obj.iid} `)} ${chalk.default.blue.bold(obj.title)}

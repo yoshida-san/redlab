@@ -86,7 +86,7 @@ export default class R2g extends Base {
 
       // 突合処理
       const notExistsTickets: Array<string> = redmineTicketsData.data.issues.map((redmine: any) => {
-        const issue = gitlabIssuesData.data.find((gitlab: any) => gitlab.title.indexOf(`r${redmine.id}_`) === 0)
+        const issue = gitlabIssuesData.find((gitlab: any) => gitlab.title.indexOf(`r${redmine.id}_`) === 0)
         return (issue === undefined) ? redmine : false
       }).filter((redmine: any) => redmine !== false)
 
