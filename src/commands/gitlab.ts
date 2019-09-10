@@ -52,8 +52,10 @@ export default class Gitlab extends GitlabBase {
       }
 
       this.log(`getting issues info in project ...`)
-      const issuesData: any = await gApi.get(gApi.getIssuesURL(projectId), gApi.createParams())
-      const issuesList: Array<string> = issuesData.data.map((obj: any) => {
+      const issuesData: any = await this.getIssuesData(gApi, projectId)
+      //this.log(`${issuesData}`)
+      this.log(`${JSON.stringify(issuesData)}`)
+      const issuesList: Array<string> = issuesData.map((obj: any) => {
         return (flags.detail)
           ? `${chalk.default.bgBlue(` ${obj.iid} `)} ${chalk.default.blue.bold(obj.title)}
 
@@ -79,7 +81,7 @@ ${obj.description}
       })
       this.log(`---`)
       this.log(`${chalk.default.greenBright(`project id`)}: ${projectId}`)
-      this.log(`${chalk.default.greenBright(`issues count`)}: ${issuesData.data.length}`)
+      this.log(`${chalk.default.greenBright(`issues count`)}: ${issuesData.length}`)
 
     } catch (e) {
       this.error(`${e.message}`)

@@ -17,38 +17,34 @@ export default class R2g extends Base {
   static flags = {
     help: flags.help({char: 'h'}),
     gproject: flags.string({char: 'g', description: '[GitLab] Project ID', default: '0'}),
-    issue: flags.string({char: 'i', description: '[GitLab] Issue ID. Using with Project ID option(-g, --gproject).', default: '0'}),
     rproject: flags.string({char: 'r', description: '[Redmine] Project ID. Only can using with Query option(-q, --query).', default: '0'}),
-    ticket: flags.string({char: 't', description: '[Redmine] Ticket ID.', default: '0'}),
-    query: flags.boolean({char: 'q', description: '[Redmine] Use Query.', default: false}),
-    limit: flags.string({char: 'l', description: '[Redmine] Number of issues per page(MAX: 100).', default: '100'}),
-    offset: flags.string({char: 'o', description: '[Redmine] Skip this number of issues in response.', default: '0'})
+    query: flags.boolean({char: 'q', description: '[Redmine] Use Query.', default: false})
   }
 
   readonly ValidationFlags = (flags: any) => {
     if (isNaN(parseInt(flags.gproject, 10))) throw new Error('Please enter the \'GitLab Project ID(-g, --groject)\' by numeric.')
-    if (isNaN(parseInt(flags.issue, 10))) throw new Error('Please enter the \'Issue ID(-i, --issue)\' by numeric.')
     if (isNaN(parseInt(flags.rproject, 10))) throw new Error('Please enter the \'Redmine Project ID(-r, --rproject)\' by numeric.')
-    if (isNaN(parseInt(flags.ticket, 10))) throw new Error('Please enter the \'Ticket ID(-t, --ticket)\' by numeric.')
-    if (isNaN(parseInt(flags.limit, 10))) throw new Error('Please enter the \'Query Limit(-l, --limit)\' by numeric.')
-    if (isNaN(parseInt(flags.offset, 10))) throw new Error('Please enter the \'Query ID(-o, --offset)\' by numeric.')
   }
 
-  readonly CompareTitleString = (gitlab: any, redmine: any) => {
-    return gitlab.title.indexOf(`r${redmine.id}_`) === 0 ? false : true
-  }
-
-  readonly feIssueData = (gitlabObject: any, redmine: any) => {
-    gitlabObject.data.forEach((gitlab: any) => {
-      return gitlab.title.indexOf(`r${redmine.id}_`) === 0 ? false : true
-    })
+  /**
+   * フラグの指定状況によって数値を返します
+   * Gitlab ProjectID, Redmine ProjectID, Query全指定の場合: 1
+   * Gitlab ProjectID, Redmine ProjectIDのみ指定の場合: 2
+   * //
+   *
+   * @param flags flagsのオブジェクト
+   * @returns number(1~6)
+   */
+  readonly FlagsSwitcher = (flags: any): number => {
+    if (flags.gproject !== 0) return 1
+    else return 5
   }
 
   async run() {
     const {flags} = this.parse(R2g)
     // for GitLab
-    let gitlabProjectId: number | null = null
-    let issueId: number | null = null
+    let gitlabProjectId = 0
+    let issueId = 0
     // for Redmine
     let redmineProjectId: number | null = null
     let statusId: number | null = null
@@ -60,8 +56,6 @@ export default class R2g extends Base {
 
     try {
       this.ValidationFlags(flags)
-      limit = parseInt(flags.limit, 10)
-      offset = parseInt(flags.offset, 10)
     } catch (e) {
       this.error(`${e.message}`)
       return
@@ -73,8 +67,8 @@ export default class R2g extends Base {
       const gApi: GitlabApi = gBase.createGitlabApiObject()
       const rApi: RedmineApi = rBase.createRedmineApiObject()
 
-      if (false) {
-        //とりあえず情報取得のため省略
+      if (flags.gproject !== '0') {
+        //
       } else {
         //Gitlab
         gitlabProjectId = await gBase.getProjectId(gApi)
@@ -87,7 +81,7 @@ export default class R2g extends Base {
 
       // Issues一覧取得処理
       this.log('Getting the diff...')
-      const gitlabIssuesData: any = await gApi.get(gApi.getIssuesURL(gitlabProjectId), gApi.createParams())
+      const gitlabIssuesData: any = await gBase.getIssuesData(gApi, gitlabProjectId)
       const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
 
       // 突合処理

@@ -19,8 +19,8 @@ class GitlabApi extends ApiConnectBase {
     this.owned = owned
   }
 
-  public getProjectsURL = (): string => `${this.apiBseUrl}${this.projectsUrl}`
-  public getIssuesURL = (projectId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
+  public getProjectsURL = (pagination: number): string => `${this.apiBseUrl}${this.projectsUrl}?page=${String(pagination)}`
+  public getIssuesURL = (projectId: number, pagination: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}?page=${String(pagination)}&per_page=5`
   public getIssueURL = (projectId: number, issueId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
   public postIssueURL = (projectId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
 
@@ -51,10 +51,15 @@ class GitlabBase extends Base {
    */
   readonly getProjectId = async (gApi: GitlabApi) => {
     try {
-      const projects = await gApi.get(gApi.getProjectsURL(), gApi.createParams())
+      const projects = await gApi.get(gApi.getProjectsURL(1), gApi.createParams())
       const argsProjects = projects.data.map((obj: any) => {
         return {name: obj.name, value: obj.id}
       })
+      //projects.headers['x-page'] === projects.headers['x-total-pages']
+      //throw new Error(`${projects.headers['cache-control']}`)
+      //throw new Error(`${JSON.stringify(projects.headers)}`)
+      if (projects.headers['x-page'] !== projects.headers['x-total-pages']) argsProjects.push({name: '次のIssuesを取得', value: 501})
+      if (projects.headers['x-page'] > 1) argsProjects.push({name: '前のIssuesを取得', value: 502})
       const projectsList: object = {
         name: 'id',
         message: 'Select Gitlab\'s Project:',
@@ -65,7 +70,32 @@ class GitlabBase extends Base {
       return parseInt(selected.id, 10)
       // tslint:disable-next-line:no-unused
     } catch (e) {
-      throw new Error('Failed to get List for Projects.')
+      throw new Error('Failed to Get List for Projects.')
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly getIssuesData = async (gApi: GitlabApi, projectId: number) => {
+    try {
+      let returnsJson = ''
+      let returnsObject: object = {}
+      let status = true
+      let counter = 0
+      while (status) {
+        counter++
+        const issueObject: any = await gApi.get(gApi.getIssuesURL(projectId, counter) , gApi.createParams())
+        // returnsJson = `${returnsJson},${JSON.stringify(issueObject.data).slice(1).slice(0, -1)}`
+        returnsObject = Object.assign(returnsObject, issueObject.data)
+        // returnsObject.assign(returnsObject, issueObject.data)
+        if (issueObject.headers['x-page'] === issueObject.headers['x-total-pages']) status = false
+      }
+      //return JSON.parse(`${returnsJson.slice(1)}`)
+      return returnsObject
+      // tslint:disable-next-line:no-unused
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
