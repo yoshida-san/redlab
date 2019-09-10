@@ -94,7 +94,7 @@ class RedmineBase extends Base {
   /**
    * TSDOC
    */
-  readonly getIssueTrackerrId = async (rApi: RedmineApi) => {
+  readonly getIssueTrackerId = async (rApi: RedmineApi) => {
     try {
       const issueTrackers = await rApi.get(rApi.getIssueTrackersURL(), rApi.createParams(null, null, 100))
       if (issueTrackers.data.trackers.length === 0) {

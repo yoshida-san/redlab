@@ -76,7 +76,7 @@ export default class R2g extends Base {
         redmineProjectId = await rBase.getProjectId(rApi)
         statusId = await rBase.getIssueStatusId(rApi)
         categoryId = await rBase.getIssueCategoryId(rApi, redmineProjectId)
-        trackerId = await rBase.getIssueTrackerrId(rApi)
+        trackerId = await rBase.getIssueTrackerId(rApi)
       }
 
       // Issues一覧取得処理

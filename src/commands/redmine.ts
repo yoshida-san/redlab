@@ -64,7 +64,7 @@ export default class Redmine extends RedmineBase {
         projectId = parseInt(flags.project, 10)
         statusId = await this.getIssueStatusId(rApi)
         categoryId = await this.getIssueCategoryId(rApi, projectId)
-        trackerId = await this.getIssueTrackerrId(rApi)
+        trackerId = await this.getIssueTrackerId(rApi)
 
       } else if (flags.query) {
         projectId = await this.getProjectId(rApi)
@@ -74,7 +74,7 @@ export default class Redmine extends RedmineBase {
         projectId = await this.getProjectId(rApi)
         statusId = await this.getIssueStatusId(rApi)
         categoryId = await this.getIssueCategoryId(rApi, projectId)
-        trackerId = await this.getIssueTrackerrId(rApi)
+        trackerId = await this.getIssueTrackerId(rApi)
       }
 
       this.log(`getting tickets info in project ...`)
