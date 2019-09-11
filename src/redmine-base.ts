@@ -48,19 +48,18 @@ class RedmineBase extends Base {
   /**
    * TSDOC
    */
-  readonly getProjectId = async (rApi: RedmineApi) => {
+  readonly getProjectId = async (rApi: RedmineApi, limit?: number | null) => {
     try {
       let returnId = 0
       let status = true
       let pagination = 0
-      let perpage = 20 // ページネーションリミット(GHと同じ20に設定)
       while (status) {
-        const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, perpage, pagination))
+        const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, limit, pagination))
         const argsProjects = projects.data.projects.map((obj: any) => {
           return {name: obj.name, value: obj.id}
         })
-        if ((pagination + perpage) < parseInt(projects.data.total_count, 10)) argsProjects.push({name: '次のIssuesを取得', value: 'next'})
-        if ((pagination - perpage) >= 0) argsProjects.push({name: '前のIssuesを取得', value: 'prev'})
+        if ((pagination + parseInt(projects.data.limit, 10)) < parseInt(projects.data.total_count, 10)) argsProjects.push({name: '次のIssuesを取得', value: 'next'})
+        if ((pagination - parseInt(projects.data.limit, 10)) >= 0) argsProjects.push({name: '前のIssuesを取得', value: 'prev'})
         const projectsList: object = {
           name: 'id',
           message: 'Select Redmine\'s Project:',
@@ -69,9 +68,9 @@ class RedmineBase extends Base {
         }
         const selected: any = await this.inquirer(projectsList)
         if (selected.id === 'next') {
-          pagination = pagination + perpage
+          pagination = pagination + parseInt(projects.data.limit, 10)
         } else if (selected.id === 'prev') {
-          pagination = pagination - perpage
+          pagination = pagination - parseInt(projects.data.limit, 10)
         } else {
           returnId = parseInt(selected.id, 10)
           status = false
@@ -170,16 +169,15 @@ class RedmineBase extends Base {
   /**
    * TSDOC
    */
-  readonly getIssuesData = async (rApi: RedmineApi, projectId: number | null, queryId: number | null, statusId: number | null, categoryId: number | null, trackerId: number | null) => {
+  readonly getIssuesData = async (rApi: RedmineApi, projectId: number | null, queryId: number | null, statusId: number | null, categoryId: number | null, trackerId: number | null, limit?: number | null, offset?: number | null) => {
     try {
       let returnsObject: Array<any> = []
       let status = true
-      let pagination = 0
-      let perpage = 2 //pagination limit
+      let pagination = offset || 0
       while (status) {
-        const ticketObject: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(projectId, queryId, perpage, pagination, statusId, categoryId, trackerId))
+        const ticketObject: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(projectId, queryId, limit, pagination, statusId, categoryId, trackerId))
         returnsObject = [...returnsObject, ...ticketObject.data.issues]
-        pagination = pagination + perpage
+        pagination = pagination + parseInt(ticketObject.data.limit, 10)
         if (pagination >= parseInt(ticketObject.data.total_count, 10)) status = false
       }
       return returnsObject
