@@ -26,20 +26,6 @@ export default class R2g extends Base {
     if (isNaN(parseInt(flags.rproject, 10))) throw new Error('Please enter the \'Redmine Project ID(-r, --rproject)\' by numeric.')
   }
 
-  /**
-   * フラグの指定状況によって数値を返します
-   * Gitlab ProjectID, Redmine ProjectID, Query全指定の場合: 1
-   * Gitlab ProjectID, Redmine ProjectIDのみ指定の場合: 2
-   * //
-   *
-   * @param flags flagsのオブジェクト
-   * @returns number(1~6)
-   */
-  readonly FlagsSwitcher = (flags: any): number => {
-    if (flags.gproject !== 0) return 1
-    else return 5
-  }
-
   async run() {
     const {flags} = this.parse(R2g)
     // for GitLab
@@ -66,13 +52,20 @@ export default class R2g extends Base {
       const gApi: GitlabApi = gBase.createGitlabApiObject()
       const rApi: RedmineApi = rBase.createRedmineApiObject()
 
-      if (flags.gproject !== '0') {
-        //
+      // Gitlab フラグ判定
+      gitlabProjectId = flags.gproject !== '0'
+                      ? parseInt(flags.gproject, 10)
+                      : await gBase.getProjectId(gApi)
+
+      // Redmine フラグ判定
+      redmineProjectId = flags.rproject !== '0'
+                       ? parseInt(flags.rproject, 10)
+                       : await rBase.getProjectId(rApi)
+
+      // Query フラグ判定
+      if (flags.query) {
+        queryId = await rBase.getQueryId(rApi, redmineProjectId)
       } else {
-        //Gitlab
-        gitlabProjectId = await gBase.getProjectId(gApi)
-        //Redmine
-        redmineProjectId = await rBase.getProjectId(rApi)
         statusId = await rBase.getIssueStatusId(rApi)
         categoryId = await rBase.getIssueCategoryId(rApi, redmineProjectId)
         trackerId = await rBase.getIssueTrackerId(rApi)
@@ -84,7 +77,7 @@ export default class R2g extends Base {
       const redmineTicketsData: any = await rBase.getIssuesData(rApi, redmineProjectId, queryId, statusId, categoryId, trackerId)
 
       // 突合処理
-      const notExistsTickets: Array<string> = redmineTicketsData.data.issues.map((redmine: any) => {
+      const notExistsTickets: Array<string> = redmineTicketsData.map((redmine: any) => {
         const issue = gitlabIssuesData.find((gitlab: any) => gitlab.title.indexOf(`r${redmine.id}_`) === 0)
         return (issue === undefined) ? redmine : false
       }).filter((redmine: any) => redmine !== false)

@@ -190,10 +190,10 @@ class RedmineBase extends Base {
   /**
    * TSDOC
    */
-  readonly getQueryId = async (rApi: RedmineApi, pid: number) => {
+  readonly getQueryId = async (rApi: RedmineApi, projectId: number) => {
     const queries = await rApi.get(rApi.getQueriesURL(), rApi.createParams(null, null, 100))
     const argsQueries = queries.data.queries.map((obj: any) => {
-      if (pid === obj.project_id) {
+      if (projectId === obj.project_id) {
         return {name: obj.name, value: obj.id}
       } else {
         return false
