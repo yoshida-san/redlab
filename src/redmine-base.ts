@@ -50,18 +50,35 @@ class RedmineBase extends Base {
    */
   readonly getProjectId = async (rApi: RedmineApi) => {
     try {
-      const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, 100))
-      const argsProjects = projects.data.projects.map((obj: any) => {
-        return {name: obj.name, value: obj.id}
-      })
-      const projectsList: object = {
-        name: 'id',
-        message: 'Select Redmine\'s Project:',
-        type: 'list',
-        choices: argsProjects
+      let returnId = 0
+      let status = true
+      let pagination = 0
+      let perpage = 20 // ページネーションリミット(GHと同じ20に設定)
+      while (status) {
+        const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, perpage, pagination))
+        const argsProjects = projects.data.projects.map((obj: any) => {
+          return {name: obj.name, value: obj.id}
+        })
+        if ((pagination + perpage) < parseInt(projects.data.total_count, 10)) argsProjects.push({name: '次のIssuesを取得', value: 'next'})
+        if ((pagination - perpage) >= 0) argsProjects.push({name: '前のIssuesを取得', value: 'prev'})
+        const projectsList: object = {
+          name: 'id',
+          message: 'Select Redmine\'s Project:',
+          type: 'list',
+          choices: argsProjects
+        }
+        const selected: any = await this.inquirer(projectsList)
+        if (selected.id === 'next') {
+          pagination = pagination + perpage
+        } else if (selected.id === 'prev') {
+          pagination = pagination - perpage
+        } else {
+          returnId = parseInt(selected.id, 10)
+          status = false
+        }
       }
-      const selected: any = await this.inquirer(projectsList)
-      return parseInt(selected.id, 10)
+      return returnId
+      // tslint:disable-next-line:no-unused
     } catch (e) {
       throw new Error('Failed to get Project IDs.')
     }
@@ -85,6 +102,7 @@ class RedmineBase extends Base {
       }
       const selected: any = await this.inquirer(issuesStatusesList)
       return parseInt(selected.id, 10)
+      // tslint:disable-next-line:no-unused
     } catch (e) {
       this.warn('Failed to get Issue Statuses.')
       return null
@@ -113,6 +131,7 @@ class RedmineBase extends Base {
       }
       const selected: any = await this.inquirer(issuesTrackersList)
       return parseInt(selected.id, 10)
+      // tslint:disable-next-line:no-unused
     } catch (e) {
       this.warn('Failed to get Issue Trakcers.')
       return null
@@ -141,9 +160,32 @@ class RedmineBase extends Base {
       }
       const selected: any = await this.inquirer(issuesCategoriesList)
       return parseInt(selected.id, 10)
+      // tslint:disable-next-line:no-unused
     } catch (e) {
       this.warn('Failed to get Issue Categorys.')
       return null
+    }
+  }
+
+  /**
+   * TSDOC
+   */
+  readonly getIssuesData = async (rApi: RedmineApi, projectId: number | null, queryId: number | null, statusId: number | null, categoryId: number | null, trackerId: number | null) => {
+    try {
+      let returnsObject: Array<any> = []
+      let status = true
+      let pagination = 0
+      let perpage = 2 //pagination limit
+      while (status) {
+        const ticketObject: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(projectId, queryId, perpage, pagination, statusId, categoryId, trackerId))
+        returnsObject = [...returnsObject, ...ticketObject.data.issues]
+        pagination = pagination + perpage
+        if (pagination >= parseInt(ticketObject.data.total_count, 10)) status = false
+      }
+      return returnsObject
+      // tslint:disable-next-line:no-unused
+    } catch (e) {
+      throw new Error(e)
     }
   }
 

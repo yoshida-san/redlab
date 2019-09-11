@@ -51,9 +51,9 @@ class GitlabBase extends Base {
    */
   readonly getProjectId = async (gApi: GitlabApi) => {
     try {
+      let returnId = 0
       let status = true
       let pagination = 1
-      let returnId = 0
       while (status) {
         const projects = await gApi.get(gApi.getProjectsURL(pagination), gApi.createParams())
         const argsProjects = projects.data.map((obj: any) => {
@@ -91,10 +91,10 @@ class GitlabBase extends Base {
     try {
       let returnsObject: Array<any> = []
       let status = true
-      let counter = 0
+      let pagination = 0
       while (status) {
-        counter++
-        const issueObject: any = await gApi.get(gApi.getIssuesURL(projectId, counter) , gApi.createParams())
+        pagination++
+        const issueObject: any = await gApi.get(gApi.getIssuesURL(projectId, pagination) , gApi.createParams())
         returnsObject = [...returnsObject, ...issueObject.data]
         if (issueObject.headers['x-page'] === issueObject.headers['x-total-pages']) status = false
       }

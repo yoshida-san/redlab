@@ -44,15 +44,14 @@ export default class R2g extends Base {
     const {flags} = this.parse(R2g)
     // for GitLab
     let gitlabProjectId = 0
-    let issueId = 0
     // for Redmine
     let redmineProjectId: number | null = null
     let statusId: number | null = null
     let categoryId: number | null = null
     let trackerId: number | null = null
     let queryId: number | null = null
-    let limit: number | null = null
-    let offset: number | null = null
+    //let limit: number | null = null
+    //let offset: number | null = null
 
     try {
       this.ValidationFlags(flags)
@@ -82,7 +81,7 @@ export default class R2g extends Base {
       // Issues一覧取得処理
       this.log('Getting the diff...')
       const gitlabIssuesData: any = await gBase.getIssuesData(gApi, gitlabProjectId)
-      const redmineTicketsData: any = await rApi.get(rApi.getIssuesURL(), rApi.createParams(redmineProjectId, queryId, limit, offset, statusId, categoryId, trackerId))
+      const redmineTicketsData: any = await rBase.getIssuesData(rApi, redmineProjectId, queryId, statusId, categoryId, trackerId)
 
       // 突合処理
       const notExistsTickets: Array<string> = redmineTicketsData.data.issues.map((redmine: any) => {
