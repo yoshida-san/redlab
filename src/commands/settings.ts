@@ -3,7 +3,9 @@ import {flags} from '@oclif/command'
 import * as chalk from 'chalk'
 import * as fs from 'fs'
 
-import {Base, Question, SettingsData} from '../base'
+import {Base} from '../base'
+import {Question} from '../data/question'
+import {SettingsData} from '../data/settingsdata'
 import {GitlabApi} from '../gitlab-base'
 import {RedmineApi} from '../redmine-base'
 

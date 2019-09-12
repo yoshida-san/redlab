@@ -4,26 +4,7 @@ import axios from 'axios'
 import * as fs from 'fs'
 import * as inq from 'inquirer'
 
-/**
- * TSDOC
- */
-interface Question {
-  name: string
-  message: string
-  type: string
-  default: string | number | boolean
-}
-
-/**
- * TSDOC
- */
-interface SettingsData {
-  r_url: string
-  r_key: string
-  g_url: string
-  g_key: string
-  g_owned: boolean
-}
+import {SettingsData} from './data/settingsdata'
 
 /**
  * TSDOC
@@ -68,4 +49,4 @@ class Base extends Command {
   async run() { }
 }
 
-export {ApiConnectBase, Base, Question, SettingsData}
+export {ApiConnectBase, Base}
