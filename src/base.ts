@@ -46,7 +46,7 @@ class ApiConnectBase {
  */
 class Base extends Command {
   public settingsData: SettingsData | null = null
-  protected settingsFilePath: string = __dirname + '/data/settings.json'
+  protected settingsFilePath: string = __dirname + '/settings/settings.json'
 
   readonly readSettingsJson = () => {
     try {
