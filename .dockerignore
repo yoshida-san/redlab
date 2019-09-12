@@ -1,6 +1,6 @@
 node_modules
 npm-debug.log
-src/data/*.json
+src/settings/*.json
 redlab
 build
 LICENSE

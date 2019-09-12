@@ -28,9 +28,7 @@ export default class R2g extends Base {
 
   async run() {
     const {flags} = this.parse(R2g)
-    // for GitLab
     let gitlabProjectId = 0
-    // for Redmine
     let redmineProjectId: number | null = null
     let statusId: number | null = null
     let categoryId: number | null = null
