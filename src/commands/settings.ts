@@ -16,9 +16,9 @@ export default class Settings extends Base {
 
   static flags = {
     help: flags.help({char: 'h'}),
-    check: flags.boolean({char: 'c', default: false, description: 'do check API connect'}),
-    result: flags.boolean({char: 'r', default: false, description: 'confirm setting data after setting'}),
-    log: flags.boolean({char: 'l', default: false, description: 'show log(check API connect process)'})
+    check: flags.boolean({char: 'c', default: false, description: 'Checking API Connection.'}),
+    result: flags.boolean({char: 'r', default: false, description: 'Show setting data after setup process.'}),
+    log: flags.boolean({char: 'l', default: false, description: 'Show Log (Checking API Connection process)'})
   }
 
   readonly questions: { [key: string]: Question } = {
@@ -30,7 +30,7 @@ export default class Settings extends Base {
     },
     r_key: {
       name: 'r_key',
-      message: 'Redmine access key',
+      message: 'Redmine Access Key',
       type: 'input',
       default: ''
     },
@@ -42,7 +42,7 @@ export default class Settings extends Base {
     },
     g_key: {
       name: 'g_key',
-      message: 'GitLab private token',
+      message: 'GitLab Private Token',
       type: 'input',
       default: ''
     },
@@ -72,8 +72,8 @@ export default class Settings extends Base {
       questions.push(updateDefault(this.questions.g_key, settingsData.g_key))
       questions.push(updateDefault(this.questions.g_owned, settingsData.g_owned))
     } catch (e) {
-      this.log(`${chalk.default.bgRed.bold('error')} ${chalk.default.red(e.message)}`)
-      this.log(`start initialize settings.json`)
+      this.log(`${chalk.default.bgRed.bold('Error')} ${chalk.default.red(e.message)}`)
+      this.log(`Starting initialize settings.json`)
       questions.push(updateDefault(this.questions.r_url))
       questions.push(updateDefault(this.questions.r_key))
       questions.push(updateDefault(this.questions.g_url))
@@ -85,19 +85,19 @@ export default class Settings extends Base {
 
     try {
       fs.writeFileSync(this.settingsFilePath, JSON.stringify(answers, null, '  '))
-      this.log(`${chalk.default.bgGreen.bold('setting file update is complete')}`)
+      this.log(`${chalk.default.bgGreen.bold('Complete to setting update.')}`)
     } catch (e) {
-      this.log(`${chalk.default.bgRed.bold('error')} ${chalk.default.red(e.message)}`)
-      this.log(`please retry 'redlab setting [-c] [-r]'`)
+      this.log(`${chalk.default.bgRed.bold('Error')} ${chalk.default.red(e.message)}`)
+      this.log(`Please retry following command:\n      $ redlab setting [-c] [-r]`)
       return
     }
 
     if (flags.result) {
-      this.log(`${chalk.default.blue.bold(`redmine url`)}:          ${answers.r_url}`)
-      this.log(`${chalk.default.blue.bold(`redmine access key`)}:   ${answers.r_key}`)
-      this.log(`${chalk.default.blue.bold(`gitlab url`)}:           ${answers.g_url}`)
-      this.log(`${chalk.default.blue.bold(`gitlab private token`)}: ${answers.g_key}`)
-      this.log(`${chalk.default.blue.bold(`gitlab owned flag`)}:    ${answers.g_owned}`)
+      this.log(`${chalk.default.blue.bold(`Redmine URL`)}:          ${answers.r_url}`)
+      this.log(`${chalk.default.blue.bold(`Redmine Access Key`)}:   ${answers.r_key}`)
+      this.log(`${chalk.default.blue.bold(`Gitlab URL`)}:           ${answers.g_url}`)
+      this.log(`${chalk.default.blue.bold(`Gitlab Private Token`)}: ${answers.g_key}`)
+      this.log(`${chalk.default.blue.bold(`Gitlab Owned Flag`)}:    ${answers.g_owned}`)
     }
 
     if (flags.check) {
@@ -110,7 +110,7 @@ export default class Settings extends Base {
         }
         this.log(chalk.default.cyan('Checking connection of GitLab\'s API.'))
         const gApi: GitlabApi = new GitlabApi(answers.g_url, answers.g_key, answers.g_owned)
-        const gInfo = await gApi.get(gApi.getProjectsURL(), gApi.createParams())
+        const gInfo = await gApi.get(gApi.getProjectsURL(1), gApi.createParams())
         if (flags.log) {
           this.log(gInfo.data)
         }
