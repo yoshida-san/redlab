@@ -1,4 +1,6 @@
 import {ApiConnectBase, Base} from './base'
+import {Inquirer} from './inquirer/inquirer'
+
 
 /**
  * TSDOC
@@ -48,12 +50,15 @@ class RedmineBase extends Base {
   /**
    * TSDOC
    */
+
+  const inq: Inquirer = new Inquirer()
   readonly getProjectId = async (rApi: RedmineApi, limit?: number | null) => {
     try {
       let returnId = 0
       let status = true
       let pagination = 0
       while (status) {
+        // API
         const projects = await rApi.get(rApi.getProjectsURL(), rApi.createParams(null, null, limit, pagination))
         const argsProjects = projects.data.projects.map((obj: any) => {
           return {name: obj.name, value: obj.id}
@@ -66,7 +71,7 @@ class RedmineBase extends Base {
           type: 'list',
           choices: argsProjects
         }
-        const selected: any = await this.inquirer(projectsList)
+        const selected: any = await this.inq.list(argsProjects, 'Select Redmine\'s Project:')
         if (selected.id === 'next') {
           pagination = pagination + parseInt(projects.data.limit, 10)
         } else if (selected.id === 'prev') {
