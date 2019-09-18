@@ -5,39 +5,6 @@ import {ApiConnectBase, Base} from './base'
 /**
  * TSDOC
  */
-class GitlabApi extends ApiConnectBase {
-  readonly apiBseUrl: string = ''
-  readonly key: string = ''
-  readonly owned: boolean = true
-  readonly projectsUrl: string = '/projects'
-  readonly issuesUrl: string = '/issues'
-
-  constructor(url: string, key: string, owned: boolean) {
-    super()
-    this.apiBseUrl = url
-    this.key = key
-    this.owned = owned
-  }
-
-  public getProjectsURL = (pagination: number): string => `${this.apiBseUrl}${this.projectsUrl}?page=${String(pagination)}&per_page=5`
-  public getIssuesURL = (projectId: number, pagination: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}?page=${String(pagination)}&per_page=5`
-  public getIssueURL = (projectId: number, issueId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
-  public postIssueURL = (projectId: number): string => `${this.apiBseUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
-
-  public createParams = (): object => {
-    return {
-      private_token: this.key,
-      owned: this.owned
-    }
-  }
-
-  public createIssueBody = (title: string): object => {
-    return {
-      private_token: this.key,
-      title
-    }
-  }
-}
 
 /**
  * TSDOC
@@ -55,7 +22,8 @@ class GitlabBase extends Base {
       let status = true
       let pagination = 1
       while (status) {
-        const projects = await gApi.get(gApi.getProjectsURL(pagination), gApi.createParams())
+        // const projects = await gApi.get(gApi.getProjectsURL(pagination), gApi.createParams())
+        const projects = await gApi.getGitlabProjectsObject(pagination)
         const argsProjects = projects.data.map((obj: any) => {
           return {name: obj.name, value: obj.id}
         })
@@ -94,7 +62,7 @@ class GitlabBase extends Base {
       let pagination = 0
       while (status) {
         pagination++
-        const issueObject: any = await gApi.get(gApi.getIssuesURL(projectId, pagination) , gApi.createParams())
+        //const issueObject: any = await gApi.get(gApi.getIssuesURL(projectId, pagination) , gApi.createParams())
         returnsObject = [...returnsObject, ...issueObject.data]
         if (issueObject.headers['x-page'] === issueObject.headers['x-total-pages']) status = false
       }
@@ -133,7 +101,7 @@ class GitlabBase extends Base {
    */
   readonly postNewIssue = async (gApi: GitlabApi, projectsId: number, issueTitle: string) => {
     try {
-      await gApi.post(gApi.postIssueURL(projectsId), gApi.createIssueBody(issueTitle))
+      //await gApi.post(gApi.postIssueURL(projectsId), gApi.createIssueBody(issueTitle))
       return true
       // tslint:disable-next-line:no-unused
     } catch (e) {

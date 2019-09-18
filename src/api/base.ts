@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-class ApiBase {
+export class ApiBase {
   protected async get(url: string, params: object) {
     const returns: any = await axios.get(url, {
       params
@@ -13,5 +13,3 @@ class ApiBase {
     return returns
   }
 }
-
-export {ApiBase}

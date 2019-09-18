@@ -1,3 +1,4 @@
+/* tslint:disable:no-redundant-jsdoc */
 import * as inq from 'inquirer'
 
 /**
@@ -21,11 +22,25 @@ class Inquirer extends InquirerBase {
     super()
   }
 
+  /**
+   * list
+   * - Inquirerのリストを表示します。個別選択向け
+   * @param param リストのオブジェクト
+   * @param message リストの説明メッセージ
+   * @return 選択が含まれたオブジェクト
+   */
   readonly list = async (param: any, message: string): Promise<object> => {
     const returns: object = await this.inquirer(param, 'list', 'id', message)
     return returns
   }
 
+  /**
+   * checkbox
+   * - Inquirerのチェックボックスを表示します。複数選択向け
+   * @param param リストのオブジェクト
+   * @param message リストの説明メッセージ
+   * @return 選択が含まれたオブジェクト
+   */
   readonly checkbox = async (param: any, message: string): Promise<object> => {
     const returns: object = await this.inquirer(param, 'checkbox', 'id', message)
     return returns
