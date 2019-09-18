@@ -1,10 +1,11 @@
 /* tslint:disable:quotemark */
-import {flags} from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 import * as chalk from 'chalk'
 
-import {RedmineApi, RedmineBase} from '../redmine-base'
+import {RedmineApi} from '../api/redmine'
+import {Inquirer} from '../inquirer/inquirer'
 
-export default class Redmine extends RedmineBase {
+export default class Redmine extends Command {
   static description = 'show redmine tickets info'
 
   static examples = [
@@ -50,9 +51,10 @@ export default class Redmine extends RedmineBase {
     }
 
     try {
-      const rApi: RedmineApi = this.createRedmineApiObject()
+      const api: RedmineApi = new RedmineApi()
 
       if (flags.ticket !== '0') {
+        //getIssueObject
         const ticketData: any = await rApi.get(rApi.getIssueURL(flags.ticket), rApi.createParams())
         this.log(ticketData.data.issue)
         return

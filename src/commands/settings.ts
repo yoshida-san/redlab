@@ -1,7 +1,6 @@
 /* tslint:disable:quotemark */
-import {flags} from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 import * as chalk from 'chalk'
-import * as fs from 'fs'
 
 import {Base} from '../base'
 import {Question} from '../data/question'

@@ -1,10 +1,11 @@
 /* tslint:disable:quotemark */
-import {flags} from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 import * as chalk from 'chalk'
 
-import {GitlabApi, GitlabBase} from '../gitlab-base'
+import {GitlabApi} from '../api/gitlab'
+import {Inquirer} from '../inquirer/inquirer'
 
-export default class Gitlab extends GitlabBase {
+export default class Gitlab extends Command {
   static description = 'show gitlab issues info'
 
   static examples = [
@@ -17,6 +18,9 @@ export default class Gitlab extends GitlabBase {
     issue: flags.string({char: 'i', description: 'issue id. used with project id option(-p, --project)', default: '0'}),
     detail: flags.boolean({char: 'd', description: 'show issue detail', default: false})
   }
+
+  private readonly gitlabApi: GitlabApi = new GitlabApi()
+  private readonly inquirer: Inquirer = new Inquirer()
 
   readonly ValidationFlags = (flags: any) => {
     if (isNaN(parseInt(flags.project, 10))) throw new Error('Please enter the \'Project ID(-p, --project)\' by numeric.')
@@ -36,7 +40,9 @@ export default class Gitlab extends GitlabBase {
     }
 
     try {
-      const gApi: GitlabApi = this.createGitlabApiObject()
+      //const gitlabApi: GitlabApi = new GitlabApi()
+      //const inquirer: Inquirer = new Inquirer()
+      const ret = this.inquirer.checkbox({}, '')
 
       if (flags.issue !== '0' && flags.project !== '0') {
         projectId = parseInt(flags.project, 10)

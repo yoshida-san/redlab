@@ -13,21 +13,17 @@ class InquirerBase {
 }
 
 /**
- * Inquirer command class
+ * Inquirer
  * - Inquirer.list: Show Inquirer with list view
  * - Inquirer.checkbox: Show Inquirer with checkbox view
  */
-class Inquirer extends InquirerBase {
-  constructor() {
-    super()
-  }
-
+export class Inquirer extends InquirerBase {
   /**
    * list
    * - Inquirerのリストを表示します。個別選択向け
-   * @param param リストのオブジェクト
-   * @param message リストの説明メッセージ
-   * @return 選択が含まれたオブジェクト
+   * @param {any} param リストのオブジェクト
+   * @param {string} message リストの説明メッセージ
+   * @return {object} 選択が含まれたオブジェクト
    */
   readonly list = async (param: any, message: string): Promise<object> => {
     const returns: object = await this.inquirer(param, 'list', 'id', message)
@@ -37,9 +33,9 @@ class Inquirer extends InquirerBase {
   /**
    * checkbox
    * - Inquirerのチェックボックスを表示します。複数選択向け
-   * @param param リストのオブジェクト
-   * @param message リストの説明メッセージ
-   * @return 選択が含まれたオブジェクト
+   * @param {any} param リストのオブジェクト
+   * @param {string} message リストの説明メッセージ
+   * @return {object} 選択が含まれたオブジェクト
    */
   readonly checkbox = async (param: any, message: string): Promise<object> => {
     const returns: object = await this.inquirer(param, 'checkbox', 'id', message)
@@ -57,5 +53,3 @@ class Inquirer extends InquirerBase {
     return returns
   }
 }
-
-export {Inquirer}

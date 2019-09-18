@@ -1,5 +1,5 @@
 /* tslint:disable:quotemark */
-import {flags} from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 require('array-foreach-async')
 
 import {Base} from '../base'
