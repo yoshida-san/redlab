@@ -4,13 +4,13 @@ import * as fs from 'fs'
 import {SettingsData} from '../interfaces/settingsdata'
 
 /**
- * API Keys
- * - ApiKeys.gitlabKey: Gitlab's Key
- * - ApiKeys.gitlabUrl: Gitlab's URL
- * - ApiKeys.redmineKey: Redmine's Key
- * - ApiKeys.redmineUrl: Redmine's URL
- * - ApiKeys.gitlabOwned: Gitlab's Owned Status
- * - function ApiKeys.save: Write Settings to JSON file
+ * API Connection Data
+ * - ApiConnectionData.gitlabKey: Gitlab's Key
+ * - ApiConnectionData.gitlabUrl: Gitlab's URL
+ * - ApiConnectionData.redmineKey: Redmine's Key
+ * - ApiConnectionData.redmineUrl: Redmine's URL
+ * - ApiConnectionData.gitlabOwned: Gitlab's Owned Status
+ * - function ApiConnectionData.save: Write Settings to JSON file
  */
 export class ApiConnectionData {
   public gitlabKey = ''
@@ -19,7 +19,7 @@ export class ApiConnectionData {
   public redmineUrl = ''
   public gitlabOwned = false
   private settingsData: SettingsData | null = null
-  private readonly settingsFilePath: string = __dirname + '../data/settings.json'
+  private readonly settingsFilePath: string = __dirname + '/../data/settings.json'
   constructor() {
     this.readSettingsJson()
     if (this.settingsData !== null) {

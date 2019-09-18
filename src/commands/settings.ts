@@ -1,14 +1,14 @@
 /* tslint:disable:quotemark */
+/* tslint:disable:ordered-imports */
 import {Command, flags} from '@oclif/command'
 import * as chalk from 'chalk'
 
-import {Base} from '../base'
-import {Question} from '../data/question'
-import {SettingsData} from '../data/settingsdata'
-import {GitlabApi} from '../gitlab-base'
-import {RedmineApi} from '../redmine-base'
+import {ApiConnectionData} from '../settings/api-connection-data'
+import {Question} from '../interfaces/question'
+import {GitlabApi} from '../api/gitlab'
+import {RedmineApi} from '../api/redmine'
 
-export default class Settings extends Base {
+export default class Settings extends Command {
   static description = 'redlab settings'
 
   static examples = [

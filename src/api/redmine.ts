@@ -6,10 +6,13 @@ import {ApiConnectionData} from '../settings/api-connection-data'
 
 /**
  * Redmine API
- * - RedmineApi.getProjectsObject: Return Gitlab's Projects Object
- * - RedmineApi.getIssuesObject: Return Gitlab's Issues Object
- * - RedmineApi.getIssueObject: Return Gitlab's Issue Object
- * - RedmineApi.postIssueText: Post new Issue with IssueTitle text parameters
+ * - RedmineApi.getProjectsObject: Return Redmine's Projects Object
+ * - RedmineApi.getIssuesObject: Return Redmine's Issues Object
+ * - RedmineApi.getIssueObject: Return Redmine's Issue Object
+ * - RedmineApi.getIssueStatusesObject: Return Redmine's Issue Statuses Object
+ * - RedmineApi.getIssueTrackersObject: Return Redmine's Issue Trackers Object
+ * - RedmineApi.getIssueCategoriesObject: Return Redmine's Issue Categories Object
+ * - RedmineApi.getQueriesObject: Return Redmine's Queries Object
  */
 export class RedmineApi extends ApiBase {
   private readonly projectsUrl: string = '/projects.json'
@@ -119,7 +122,7 @@ export class RedmineApi extends ApiBase {
   /**
    * getIssueCategoriesObject
    * - IssueCategoriesのオブジェクトを返します。一覧取得用
-   * @param {?number} projectId プロジェクトID
+   * @param {number} projectId プロジェクトID
    * @param {?number} pagination ページネーション位置 / 指定なし: defaultPagination
    * @param {?number} limit 取得上限 / 指定なし: maxLimit(100)
    * @return {object} IssueCategoriesのObject

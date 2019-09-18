@@ -6,7 +6,7 @@ import {GitlabApi} from '../api/gitlab'
 import {RedmineApi} from '../api/redmine'
 import {Inquirer} from '../inquirer/inquirer'
 
-export default class R2g extends Base {
+export default class R2g extends Command {
   static description = 'r2g\'s description'
 
   static examples = [
