@@ -201,7 +201,7 @@ export default class Redmine extends Command {
       }
 
       this.log(`getting tickets info in project ...`)
-      const ticketsData: any = await this.getIssuesData(redmineApi, projectId, queryId, statusId, categoryId, trackerId)
+      const ticketsData: any = await this.getIssuesData(redmineApi, projectId, queryId, statusId, categoryId, trackerId, limit, offset)
       const ticketsList: Array<string> = ticketsData.map((obj: any) => {
         return (flags.detail)
           ? `${chalk.default.bgBlue(` ${obj.id} `)} ${chalk.default.blue.bold(obj.subject)}
