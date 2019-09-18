@@ -2,7 +2,7 @@
 /* tslint:disable:member-ordering */
 /* tslint:disable:no-redundant-jsdoc */
 import {ApiBase} from './base'
-import {ApiKeys} from '../settings/apikeys'
+import {ApiConnectionData} from '../settings/api-connection-data'
 
 /**
  * Redmine API
@@ -21,19 +21,19 @@ export class RedmineApi extends ApiBase {
   private readonly defaultLimit: number = 20
   private readonly maxLimit: number = 100
   private readonly defaultPagination: number = 0
-  private readonly keys: ApiKeys = new ApiKeys()
+  private readonly connectionData: ApiConnectionData = new ApiConnectionData()
 
-  private readonly getProjectsURL = (): string => `${this.keys.redmineUrl}${this.projectsUrl}`
-  private readonly getQueriesURL = (): string => `${this.keys.redmineUrl}${this.queriesUrl}`
-  private readonly getIssuesURL = (): string => `${this.keys.redmineUrl}${this.issuesUrl}`
-  private readonly getIssueStatusesURL = (): string => `${this.keys.redmineUrl}${this.issueStatusesUrl}`
-  private readonly getIssueCategoriesURL = (projectId: number): string => `${this.keys.redmineUrl}/projects/${String(projectId)}${this.issueCategoriesUrl}`
-  private readonly getIssueTrackersURL = (): string => `${this.keys.redmineUrl}${this.issueTrackerUrl}`
-  private readonly getIssueURL = (issueId: number) => `${this.keys.redmineUrl}/issues/${String(issueId)}.json`
+  private readonly getProjectsURL = (): string => `${this.connectionData.redmineUrl}${this.projectsUrl}`
+  private readonly getQueriesURL = (): string => `${this.connectionData.redmineUrl}${this.queriesUrl}`
+  private readonly getIssuesURL = (): string => `${this.connectionData.redmineUrl}${this.issuesUrl}`
+  private readonly getIssueStatusesURL = (): string => `${this.connectionData.redmineUrl}${this.issueStatusesUrl}`
+  private readonly getIssueCategoriesURL = (projectId: number): string => `${this.connectionData.redmineUrl}/projects/${String(projectId)}${this.issueCategoriesUrl}`
+  private readonly getIssueTrackersURL = (): string => `${this.connectionData.redmineUrl}${this.issueTrackerUrl}`
+  private readonly getIssueURL = (issueId: number) => `${this.connectionData.redmineUrl}/issues/${String(issueId)}.json`
 
   private readonly createParams = (projectId?: number | null, queryId?: number | null, limit?: number | null, offset?: number | null, status?: number | null, category?: number | null, tracker?: number | null): object => {
     return {
-      key: this.keys.redmineKey,
+      key: this.connectionData.redmineKey,
       project_id: projectId || null,
       query_id: queryId || null,
       limit: limit || null,

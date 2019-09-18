@@ -1,7 +1,7 @@
 /* tslint:disable:no-redundant-jsdoc */
 import * as fs from 'fs'
 
-import {SettingsData} from '../data/settingsdata'
+import {SettingsData} from '../interfaces/settingsdata'
 
 /**
  * API Keys
@@ -12,14 +12,14 @@ import {SettingsData} from '../data/settingsdata'
  * - ApiKeys.gitlabOwned: Gitlab's Owned Status
  * - function ApiKeys.save: Write Settings to JSON file
  */
-export class ApiKeys {
+export class ApiConnectionData {
   public gitlabKey = ''
   public gitlabUrl = ''
   public redmineKey = ''
   public redmineUrl = ''
   public gitlabOwned = false
   private settingsData: SettingsData | null = null
-  private readonly settingsFilePath: string = __dirname + '/data/settings.json'
+  private readonly settingsFilePath: string = __dirname + '../data/settings.json'
   constructor() {
     this.readSettingsJson()
     if (this.settingsData !== null) {

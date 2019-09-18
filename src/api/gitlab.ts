@@ -2,7 +2,7 @@
 /* tslint:disable:member-ordering */
 /* tslint:disable:no-redundant-jsdoc */
 import {ApiBase} from './base'
-import {ApiKeys} from '../settings/apikeys'
+import {ApiConnectionData} from '../settings/api-connection-data'
 
 /**
  * Gitlab API
@@ -16,23 +16,23 @@ export class GitlabApi extends ApiBase {
   private readonly issuesUrl: string = '/issues'
   private readonly defaultLimit: number = 20
   private readonly defaultPagination: number = 1
-  private readonly keys: ApiKeys = new ApiKeys()
+  private readonly connectionData: ApiConnectionData = new ApiConnectionData()
 
-  private readonly getProjectsURL = (pagination: number, limit: number): string => `${this.keys.gitlabUrl}${this.projectsUrl}?per_page=${String(limit)}&page=${String(pagination)}`
-  private readonly getIssuesURL = (projectId: number, pagination: number, limit: number): string => `${this.keys.gitlabUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}?per_page=${String(limit)}&page=${String(pagination)}`
-  private readonly getIssueURL = (projectId: number, issueId: number): string => `${this.keys.gitlabUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
-  private readonly postIssueURL = (projectId: number): string => `${this.keys.gitlabUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
+  private readonly getProjectsURL = (pagination: number, limit: number): string => `${this.connectionData.gitlabUrl}${this.projectsUrl}?per_page=${String(limit)}&page=${String(pagination)}`
+  private readonly getIssuesURL = (projectId: number, pagination: number, limit: number): string => `${this.connectionData.gitlabUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}?per_page=${String(limit)}&page=${String(pagination)}`
+  private readonly getIssueURL = (projectId: number, issueId: number): string => `${this.connectionData.gitlabUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}/${String(issueId)}`
+  private readonly postIssueURL = (projectId: number): string => `${this.connectionData.gitlabUrl}${this.projectsUrl}/${String(projectId)}${this.issuesUrl}`
 
   private readonly createParams = (): object => {
     return {
-      private_token: this.keys.gitlabKey,
-      owned: this.keys.gitlabOwned
+      private_token: this.connectionData.gitlabKey,
+      owned: this.connectionData.gitlabOwned
     }
   }
 
   private readonly createIssueBody = (title: string): object => {
     return {
-      private_token: this.keys.gitlabKey,
+      private_token: this.connectionData.gitlabKey,
       title
     }
   }

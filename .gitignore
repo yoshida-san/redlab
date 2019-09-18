@@ -63,7 +63,7 @@ typings/
 .next
 
 # data file
-src/settings/data/*.json
+src/data/*.json
 
 # macOS Finder file
 .DS_Store

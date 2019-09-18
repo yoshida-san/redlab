@@ -2,9 +2,9 @@
 import {Command, flags} from '@oclif/command'
 require('array-foreach-async')
 
-import {Base} from '../base'
-import {GitlabApi, GitlabR2GBase} from '../gitlab-base'
-import {RedmineApi, RedmineR2GBase} from '../redmine-base'
+import {GitlabApi} from '../api/gitlab'
+import {RedmineApi} from '../api/redmine'
+import {Inquirer} from '../inquirer/inquirer'
 
 export default class R2g extends Base {
   static description = 'r2g\'s description'
