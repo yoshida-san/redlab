@@ -1,13 +1,14 @@
 /* tslint:disable:quotemark */
-import {flags} from '@oclif/command'
+/* tslint:disable:ordered-imports */
+import {Command, flags} from '@oclif/command'
 import * as chalk from 'chalk'
-import * as fs from 'fs'
 
-import {Base, Question, SettingsData} from '../base'
-import {GitlabApi} from '../gitlab-base'
-import {RedmineApi} from '../redmine-base'
+import {ApiConnectionData} from '../settings/api-connection-data'
+import {Inquirer} from '../inquirer/inquirer'
+import {GitlabApi} from '../api/gitlab'
+import {RedmineApi} from '../api/redmine'
 
-export default class Settings extends Base {
+export default class Settings extends Command {
   static description = 'redlab settings'
 
   static examples = [
@@ -21,103 +22,72 @@ export default class Settings extends Base {
     log: flags.boolean({char: 'l', default: false, description: 'Show Log (Checking API Connection process)'})
   }
 
-  readonly questions: { [key: string]: Question } = {
-    r_url: {
-      name: 'r_url',
-      message: 'Redmine URL(API base URL)',
-      type: 'input',
-      default: 'https://foobar.example'
-    },
-    r_key: {
-      name: 'r_key',
-      message: 'Redmine Access Key',
-      type: 'input',
-      default: ''
-    },
-    g_url: {
-      name: 'g_url',
-      message: 'GitLab URL(API base URL)',
-      type: 'input',
-      default: 'https://foobar.example'
-    },
-    g_key: {
-      name: 'g_key',
-      message: 'GitLab Private Token',
-      type: 'input',
-      default: ''
-    },
-    g_owned: {
-      name: 'g_owned',
-      message: 'Use owned flag(Gitlab only)',
-      type: 'confirm',
-      default: true
-    }
-  }
-
   async run() {
     const {flags} = this.parse(Settings)
-    let questions: Array<Question> = []
-
-    let updateDefault = (q: Question, n?: string | boolean): Question => {
-      q.default = (n !== undefined) ? n : q.default
-      return q
-    }
 
     try {
-      fs.statSync(this.settingsFilePath)
-      const settingsData: SettingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
-      questions.push(updateDefault(this.questions.r_url, settingsData.r_url))
-      questions.push(updateDefault(this.questions.r_key, settingsData.r_key))
-      questions.push(updateDefault(this.questions.g_url, settingsData.g_url))
-      questions.push(updateDefault(this.questions.g_key, settingsData.g_key))
-      questions.push(updateDefault(this.questions.g_owned, settingsData.g_owned))
+      const inquirer: Inquirer = new Inquirer()
+      try {
+        const connectionData: ApiConnectionData = new ApiConnectionData()
+        connectionData.redmineUrl = await inquirer.input(connectionData.redmineUrl, 'Redmine URL (API base URL): ')
+        connectionData.redmineKey = await inquirer.input(connectionData.redmineKey, 'Redmine Access Key: ')
+        connectionData.gitlabUrl = await inquirer.input(connectionData.gitlabUrl, 'GitLab URL (API base URL): ')
+        connectionData.gitlabKey = await inquirer.input(connectionData.gitlabKey, 'GitLab Private Token: ')
+        connectionData.gitlabOwned = await inquirer.confirm(connectionData.gitlabOwned, 'Use owned flag (Gitlab only): ')
+        connectionData.save()
+        this.log(`${chalk.default.bgGreen.bold('Done update settings.')}`)
+      } catch (e) {
+        this.log(`${chalk.default.bgRed.bold(' Error ')}: ${chalk.default.red(e.message)}`)
+        this.log(`Starting initialize settings.json`)
+        const connectionData: ApiConnectionData = new ApiConnectionData(true)
+        connectionData.redmineUrl = await inquirer.input('https://example.com', 'Redmine URL (API base URL): ')
+        connectionData.redmineKey = await inquirer.input('', 'Redmine Access Key: ')
+        connectionData.gitlabUrl = await inquirer.input('https://example.com', 'GitLab URL (API base URL): ')
+        connectionData.gitlabKey = await inquirer.input('', 'GitLab Private Token: ')
+        connectionData.gitlabOwned = await inquirer.confirm(true, 'Use owned flag (Gitlab only): ')
+        connectionData.save()
+        this.log(`${chalk.default.bgGreen.bold('Done initialize settings.')}`)
+      }
     } catch (e) {
-      this.log(`${chalk.default.bgRed.bold('Error')} ${chalk.default.red(e.message)}`)
-      this.log(`Starting initialize settings.json`)
-      questions.push(updateDefault(this.questions.r_url))
-      questions.push(updateDefault(this.questions.r_key))
-      questions.push(updateDefault(this.questions.g_url))
-      questions.push(updateDefault(this.questions.g_key))
-      questions.push(updateDefault(this.questions.g_owned))
-    }
-
-    const answers: SettingsData = await this.inquirer(questions)
-
-    try {
-      fs.writeFileSync(this.settingsFilePath, JSON.stringify(answers, null, '  '))
-      this.log(`${chalk.default.bgGreen.bold('Complete to setting update.')}`)
-    } catch (e) {
-      this.log(`${chalk.default.bgRed.bold('Error')} ${chalk.default.red(e.message)}`)
-      this.log(`Please retry following command:\n      $ redlab setting [-c] [-r]`)
+      this.log(`${chalk.default.bgRed.bold(' Error ')}: ${chalk.default.red(e.message)}`)
+      this.log(`Please retry following command:\n$ redlab setting [-c] [-r]`)
       return
     }
 
     if (flags.result) {
-      this.log(`${chalk.default.blue.bold(`Redmine URL`)}:          ${answers.r_url}`)
-      this.log(`${chalk.default.blue.bold(`Redmine Access Key`)}:   ${answers.r_key}`)
-      this.log(`${chalk.default.blue.bold(`Gitlab URL`)}:           ${answers.g_url}`)
-      this.log(`${chalk.default.blue.bold(`Gitlab Private Token`)}: ${answers.g_key}`)
-      this.log(`${chalk.default.blue.bold(`Gitlab Owned Flag`)}:    ${answers.g_owned}`)
+      try {
+        const connectionData: ApiConnectionData = new ApiConnectionData()
+        this.log(`${chalk.default.blue.bold(`Redmine URL`)}:          ${connectionData.redmineUrl}`)
+        this.log(`${chalk.default.blue.bold(`Redmine Access Key`)}:   ${connectionData.redmineKey}`)
+        this.log(`${chalk.default.blue.bold(`Gitlab URL`)}:           ${connectionData.gitlabUrl}`)
+        this.log(`${chalk.default.blue.bold(`Gitlab Private Token`)}: ${connectionData.gitlabKey}`)
+        this.log(`${chalk.default.blue.bold(`Gitlab Owned Flag`)}:    ${connectionData.gitlabOwned}`)
+      } catch (e) {
+        this.log(`${chalk.default.bgRed.bold('ERROR')} ${chalk.default.red(e.message)}`)
+        this.log(`${chalk.default.red('Failed to showing result.')}`)
+        return
+      }
     }
 
     if (flags.check) {
       try {
         this.log(chalk.default.cyan('Checking connection of Redmine\'s API.'))
-        const rApi: RedmineApi = new RedmineApi(answers.r_url, answers.r_key)
-        const rInfo = await rApi.get(rApi.getProjectsURL(), rApi.createParams())
+        const redmineApi: RedmineApi = new RedmineApi()
+        const redmineInfo: any = await redmineApi.getProjectsObject()
         if (flags.log) {
-          this.log(rInfo.data)
+          this.log(redmineInfo.data)
         }
         this.log(chalk.default.cyan('Checking connection of GitLab\'s API.'))
-        const gApi: GitlabApi = new GitlabApi(answers.g_url, answers.g_key, answers.g_owned)
-        const gInfo = await gApi.get(gApi.getProjectsURL(1), gApi.createParams())
+        const gitlabApi: GitlabApi = new GitlabApi()
+        const gitlabInfo: any = await gitlabApi.getProjectsObject()
         if (flags.log) {
-          this.log(gInfo.data)
+          this.log(gitlabInfo.data)
         }
         this.log(`${chalk.default.green('Succeeded to checking connections of APIs.')}`)
       } catch (e) {
         this.log(`${chalk.default.bgRed.bold('ERROR')} ${chalk.default.red(e.message)}`)
         this.log(`${chalk.default.red('Failed to checking connections of APIs.')}`)
+        return
       }
     }
   }

@@ -30,6 +30,8 @@ $ cd redlab
 
 # Redlabコンテナーのビルド
 $ ./build
+# アップデート等でリビルドをする場合
+$ ./build -r
 
 # Redlabの実行
 $ ./redlab [subcommand and args]

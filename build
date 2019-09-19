@@ -1,3 +1,22 @@
 #!/bin/sh
 docker=`which docker`
+while getopts rh OPT
+do
+  case $OPT in
+    "r" ) FLG_R="TRUE" ;;
+    "h" ) FLG_H="TRUE" ;;
+      * ) echo "Usage: build [-r: rebuild] [-h: help]" 1>&2
+          exit 1 ;;
+  esac
+done
+if [ "$FLG_H" = "TRUE" ]; then
+  echo "Redlab Docker Image Building Kit"
+  echo "Usage: build [-r] [-h]"
+  echo "Options: -r: Delete old image and rebuild Redlab image"
+  echo "         -h: Help"
+  exit 0
+fi
+if [ "$FLG_R" = "TRUE" ]; then
+  docker rmi redlab
+fi
 $docker build -t redlab .
