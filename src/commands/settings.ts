@@ -26,30 +26,18 @@ export default class Settings extends Command {
     const {flags} = this.parse(Settings)
 
     try {
+      this.log(`Starting initialize settings.json`)
       const inquirer: Inquirer = new Inquirer()
-      try {
-        const connectionData: ApiConnectionData = new ApiConnectionData()
-        connectionData.redmineUrl = await inquirer.input(connectionData.redmineUrl, 'Redmine URL (API base URL): ')
-        connectionData.redmineKey = await inquirer.input(connectionData.redmineKey, 'Redmine Access Key: ')
-        connectionData.gitlabUrl = await inquirer.input(connectionData.gitlabUrl, 'GitLab URL (API base URL): ')
-        connectionData.gitlabKey = await inquirer.input(connectionData.gitlabKey, 'GitLab Private Token: ')
-        connectionData.gitlabOwned = await inquirer.confirm(connectionData.gitlabOwned, 'Use owned flag (Gitlab only): ')
-        connectionData.save()
-        this.log(`${chalk.default.bgGreen.bold('Done update settings.')}`)
-      } catch (e) {
-        this.log(`${chalk.default.bgRed.bold(' Error ')}: ${chalk.default.red(e.message)}`)
-        this.log(`Starting initialize settings.json`)
-        const connectionData: ApiConnectionData = new ApiConnectionData(true)
-        connectionData.redmineUrl = await inquirer.input('https://example.com', 'Redmine URL (API base URL): ')
-        connectionData.redmineKey = await inquirer.input('', 'Redmine Access Key: ')
-        connectionData.gitlabUrl = await inquirer.input('https://example.com', 'GitLab URL (API base URL): ')
-        connectionData.gitlabKey = await inquirer.input('', 'GitLab Private Token: ')
-        connectionData.gitlabOwned = await inquirer.confirm(true, 'Use owned flag (Gitlab only): ')
-        connectionData.save()
-        this.log(`${chalk.default.bgGreen.bold('Done initialize settings.')}`)
-      }
+      const connectionData: ApiConnectionData = new ApiConnectionData(true)
+      connectionData.redmineUrl = await inquirer.input(connectionData.redmineUrl, 'Redmine URL (API base URL): ')
+      connectionData.redmineKey = await inquirer.input(connectionData.redmineKey, 'Redmine Access Key: ')
+      connectionData.gitlabUrl = await inquirer.input(connectionData.gitlabUrl, 'GitLab URL (API base URL): ')
+      connectionData.gitlabKey = await inquirer.input(connectionData.gitlabKey, 'GitLab Private Token: ')
+      connectionData.gitlabOwned = await inquirer.confirm(connectionData.gitlabOwned, 'Use owned flag (Gitlab only): ')
+      connectionData.save()
+      this.log(`${chalk.default.bgGreen.bold('Done initialize settings.')}`)
     } catch (e) {
-      this.log(`${chalk.default.bgRed.bold(' Error ')}: ${chalk.default.red(e.message)}`)
+      this.log(`${chalk.default.bgRed.bold(' Error ')} ${chalk.default.red(e.message)}`)
       this.log(`Please retry following command:\n$ redlab setting [-c] [-r]`)
       return
     }
@@ -63,7 +51,7 @@ export default class Settings extends Command {
         this.log(`${chalk.default.blue.bold(`Gitlab Private Token`)}: ${connectionData.gitlabKey}`)
         this.log(`${chalk.default.blue.bold(`Gitlab Owned Flag`)}:    ${connectionData.gitlabOwned}`)
       } catch (e) {
-        this.log(`${chalk.default.bgRed.bold('ERROR')} ${chalk.default.red(e.message)}`)
+        this.log(`${chalk.default.bgRed.bold(' ERROR ')} ${chalk.default.red(e.message)}`)
         this.log(`${chalk.default.red('Failed to showing result.')}`)
         return
       }
