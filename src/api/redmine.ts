@@ -54,7 +54,7 @@ export class RedmineApi extends ApiBase {
    * @param {?number} limit 取得上限 / 指定なし: defaultLimit
    * @return {object} ProjectsのObject
    */
-  readonly getProjectsObject = async (pagination: number | null, limit?: number | null): Promise<object> => {
+  readonly getProjectsObject = async (pagination?: number | null, limit?: number | null): Promise<object> => {
     const paginationParam = pagination || this.defaultPagination
     const limitParam = limit || this.defaultLimit
     const returns: object = await this.get(this.getProjectsURL(), this.createParams(null, null, limitParam, paginationParam))
@@ -73,7 +73,7 @@ export class RedmineApi extends ApiBase {
    * @param {?number} limit 取得上限 / 指定なし: defaultLimit
    * @return {object} IssuesのObject
    */
-  readonly getIssuesObject = async (projectId: number | null, queryId: number | null, statusId: number | null, categoryId: number | null, trackerId: number | null, pagination: number | null, limit?: number | null): Promise<object> => {
+  readonly getIssuesObject = async (projectId: number | null, queryId: number | null, statusId: number | null, categoryId: number | null, trackerId: number | null, pagination?: number | null, limit?: number | null): Promise<object> => {
     const paginationParam = pagination || this.defaultPagination
     const limitParam = limit || this.defaultLimit
     const returns: object = await this.get(this.getIssuesURL(), this.createParams(projectId, queryId, limitParam, paginationParam, statusId, categoryId, trackerId))

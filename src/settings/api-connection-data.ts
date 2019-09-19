@@ -18,18 +18,14 @@ export class ApiConnectionData {
   public redmineKey = ''
   public redmineUrl = ''
   public gitlabOwned = false
-  private settingsData: SettingsData | null = null
   private readonly settingsFilePath: string = __dirname + '/../data/settings.json'
-  constructor() {
-    this.readSettingsJson()
-    if (this.settingsData !== null) {
-      this.gitlabKey = this.settingsData.g_key
-      this.gitlabUrl = this.settingsData.g_url
-      this.redmineKey = this.settingsData.r_key
-      this.redmineUrl = this.settingsData.r_url
-      this.gitlabOwned = this.settingsData.g_owned
-    } else {
-      throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')
+  constructor(forced?: boolean) {
+    try {
+      this.readSettingsObject(this.readSettingsJson())
+    } catch (e) {
+      if (!forced) {
+        throw new Error(e.message)
+      }
     }
   }
 
@@ -38,33 +34,45 @@ export class ApiConnectionData {
    */
   readonly save = () => this.writeSettingsJson()
 
-  private readonly readSettingsJson = () => {
+  private readonly readSettingsJson = (): SettingsData | null => {
+    let settingsData: SettingsData | null = null
     try {
-      if (this.settingsData === null) {
-        this.settingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
-      }
+      settingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
       // tslint:disable-next-line:no-unused
     } catch (e) {
-      throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')
+      throw new Error('Failed to read \'settings.json\'.')
     }
+    return settingsData
   }
 
   private readonly writeSettingsJson = () => {
     try {
-      fs.writeFileSync(this.settingsFilePath, JSON.stringify(this.settingsObject, null, '  '))
+      fs.writeFileSync(this.settingsFilePath, JSON.stringify(this.makeSettingsObject(), null, '  '))
       // tslint:disable-next-line:no-unused
     } catch (e) {
-      throw new Error('Failed to write \'settings.json\'. ')
+      throw new Error('Failed to write \'settings.json\'.')
     }
   }
 
-  private readonly settingsObject = (): SettingsData => {
+  private readonly makeSettingsObject = (): SettingsData => {
     return {
       r_url: this.redmineUrl,
       r_key: this.redmineKey,
       g_url: this.gitlabUrl,
       g_key: this.gitlabKey,
       g_owned: this.gitlabOwned
+    }
+  }
+
+  private readonly readSettingsObject = (settingsData: SettingsData | null) => {
+    if (settingsData !== null) {
+      this.gitlabKey = settingsData.g_key
+      this.gitlabUrl = settingsData.g_url
+      this.redmineKey = settingsData.r_key
+      this.redmineUrl = settingsData.r_url
+      this.gitlabOwned = settingsData.g_owned
+    } else {
+      throw new Error('Failed to read Settings Data.')
     }
   }
 }
