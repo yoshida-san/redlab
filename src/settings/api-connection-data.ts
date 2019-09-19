@@ -14,19 +14,13 @@ import {SettingsData} from '../interfaces/settingsdata'
  */
 export class ApiConnectionData {
   public gitlabKey = ''
-  public gitlabUrl = ''
+  public gitlabUrl = 'https://example.com'
   public redmineKey = ''
-  public redmineUrl = ''
-  public gitlabOwned = false
+  public redmineUrl = 'https://example.com'
+  public gitlabOwned = true
   private readonly settingsFilePath: string = __dirname + '/../data/settings.json'
-  constructor(forced?: boolean) {
-    try {
-      this.readSettingsObject(this.readSettingsJson())
-    } catch (e) {
-      if (!forced) {
-        throw new Error(e.message)
-      }
-    }
+  constructor(setupFlag?: boolean) {
+    if (this.fileExists() || !setupFlag) this.readSettingsObject(this.readSettingsJson())
   }
 
   /**
@@ -40,7 +34,7 @@ export class ApiConnectionData {
       settingsData = JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
       // tslint:disable-next-line:no-unused
     } catch (e) {
-      throw new Error('Failed to read \'settings.json\'.')
+      throw new Error('Failed to read \'settings.json\'. Please try to the following command:\n      $ redlab settings')
     }
     return settingsData
   }
@@ -73,6 +67,16 @@ export class ApiConnectionData {
       this.gitlabOwned = settingsData.g_owned
     } else {
       throw new Error('Failed to read Settings Data.')
+    }
+  }
+
+  private readonly fileExists = (): boolean => {
+    try {
+      JSON.parse(fs.readFileSync(this.settingsFilePath, 'utf8'))
+      return true
+      // tslint:disable-next-line:no-unused
+    } catch (e) {
+      return false
     }
   }
 }
